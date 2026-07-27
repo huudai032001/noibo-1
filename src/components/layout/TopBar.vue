@@ -105,7 +105,10 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
         >
           <Bell class="notification__icon" :size="20" />
         </div>
-        <div class="notification-content dropdown-box mt-8 absolute top-0 right-0 z-10 -mr-10 sm:mr-0">
+        <div
+          class="notification-content dropdown-box mt-8 absolute top-0 right-0 z-10 -mr-10 sm:mr-0"
+          :class="{ show: openDropdown === 'notify' }"
+        >
           <div class="notification-content__box dropdown-box__content box">
             <div class="notification-content__title">Notifications</div>
             <div
@@ -145,7 +148,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
         >
           D
         </div>
-        <div class="dropdown-box mt-10 absolute w-56 top-0 right-0 z-20">
+        <div class="dropdown-box mt-10 absolute w-56 top-0 right-0 z-20" :class="{ show: openDropdown === 'account' }">
           <div class="dropdown-box__content box bg-theme-38 text-white">
             <div class="p-4 border-b border-theme-40">
               <div class="font-medium">Denzel Washington</div>
