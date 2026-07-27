@@ -2,9 +2,10 @@
 import { ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { ChevronDown, resolveIcon } from '../../utils/icons'
-import { topMenuItems } from '../../data/menu'
+import { useFilteredMenu } from '@/composables/use-filtered-menu'
 
 const route = useRoute()
+const { filteredMenuItems } = useFilteredMenu()
 const openIndex = ref(null)
 
 function isActive(item) {
@@ -33,7 +34,7 @@ function close() {
   <nav class="top-nav">
     <ul>
       <li
-        v-for="(item, index) in topMenuItems"
+        v-for="(item, index) in filteredMenuItems"
         :key="item.title"
         class="relative"
         @mouseleave="close"

@@ -1,11 +1,12 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { sideMenuItems } from '../../data/menu'
+import { useFilteredMenu } from '@/composables/use-filtered-menu'
 import SideMenuItem from './SideMenuItem.vue'
 import logoEdutalk from '@/assets/logo_edutalk.svg'
 
 const route = useRoute()
+const { filteredMenuItems } = useFilteredMenu()
 
 function cloneMenu(items) {
   return items.map((item) => {
@@ -18,7 +19,15 @@ function cloneMenu(items) {
   })
 }
 
-const menu = ref(cloneMenu(sideMenuItems))
+const menu = ref(cloneMenu(filteredMenuItems.value))
+
+watch(
+  filteredMenuItems,
+  (items) => {
+    menu.value = cloneMenu(items)
+  },
+  { deep: true },
+)
 
 function pathMatches(item, path) {
   if (item.to === path) return true

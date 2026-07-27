@@ -2,10 +2,11 @@
 import { ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { BarChart2, ChevronDown, resolveIcon } from '../../utils/icons'
-import { sideMenuItems } from '../../data/menu'
+import { useFilteredMenu } from '@/composables/use-filtered-menu'
 import logoEdutalk from '@/assets/logo_edutalk.svg'
 
 const route = useRoute()
+const { filteredMenuItems } = useFilteredMenu()
 const open = ref(false)
 
 function cloneMenu(items) {
@@ -17,7 +18,15 @@ function cloneMenu(items) {
   })
 }
 
-const menu = ref(cloneMenu(sideMenuItems))
+const menu = ref(cloneMenu(filteredMenuItems.value))
+
+watch(
+  filteredMenuItems,
+  (items) => {
+    menu.value = cloneMenu(items)
+  },
+  { deep: true },
+)
 
 watch(
   () => route.path,

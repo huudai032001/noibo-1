@@ -1,6 +1,6 @@
-1. Tại router dashboard nếu chưa có thì tạo mới
+1. Tại router phieu-luong nếu chưa có thì tạo mới
 1.1 Hãy sử dụng tailwind và primeVue để làm toàn bộ component
-2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/career-roadmap/CareerRoadmap toàn
+2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/human-resource/phieu-luong.vue toàn
    bộ composables/components/models/apis liên quan
 3. Refactor toàn bộ logic sang composables 
 

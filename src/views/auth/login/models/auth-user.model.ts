@@ -15,14 +15,20 @@ export interface AuthCandidate {
   status?: number
 }
 
+export interface AuthUserPosition {
+  position?: string
+}
+
 export interface AuthUser {
   id: number
   email?: string
   name?: string
+  image?: string
   isConfirm?: number
   accountType?: AuthAccountType
   profile?: AuthUserProfile
   permission?: string[]
+  userPositions?: AuthUserPosition[]
 }
 
 export interface LoginResponse {
