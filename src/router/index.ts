@@ -5,7 +5,7 @@ const routes: RouteRecordRaw[] = [
     path: '/confirm-sms-test-input',
     name: 'confirm-sms-test-input',
     component: () => import('../views/confirm-sms-test-input/ConfirmSmsTestInput.vue'),
-    meta: { title: 'Xác nhận ca test speaking', bodyClass: 'app' },
+    meta: { title: 'Xác nhận ca test speaking', bodyClass: 'confirm-sms' },
   },
   {
     path: '/login',
@@ -107,7 +107,7 @@ router.afterEach((to) => {
     (to.matched.find((record) => record.meta.bodyClass)?.meta.bodyClass as string | undefined) ||
     'app'
 
-  document.body.classList.remove('login', 'app')
+  document.body.classList.remove('login', 'app', 'confirm-sms')
   document.body.classList.add(bodyClass)
 })
 

@@ -14,10 +14,9 @@ export default class ApiService {
 
   public static async get<Request = unknown, Response = unknown>(
     url: string,
-    data?: Request,
+    params?: Request,
     config?: AxiosRequestConfig,
   ): Promise<Response> {
-    const params = ApiService.convertParams(data)
     return axios.get(url, { params, ...config })
   }
 

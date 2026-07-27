@@ -24,8 +24,14 @@ export interface ConfirmSmsTestInputData {
   testInputScheduleItem: ConfirmSmsScheduleItem[]
 }
 
+export interface ShowConfirmTestInputParams {
+  uuid: string
+}
+
 export interface ShowConfirmTestInputResponse {
-  data: ConfirmSmsTestInputData
+  error: boolean
+  message: string | null
+  data: ConfirmSmsTestInputData | null
 }
 
 export interface ConfirmTestInputPayload {

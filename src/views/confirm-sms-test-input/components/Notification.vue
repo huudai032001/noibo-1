@@ -7,6 +7,7 @@ import type {
   ConfirmSmsTestInputData,
 } from '../models/confirm-sms-test-input.model'
 import { CONFIRM_SMS_STATUS } from '../constants'
+import DetailRow from './DetailRow.vue'
 import ResultMessage from './ResultMessage.vue'
 
 const props = defineProps<{
@@ -15,6 +16,10 @@ const props = defineProps<{
 }>()
 
 const { formatUserLabel } = useFormatter()
+
+const isCancelled = computed(
+  () => props.item !== null && Number(props.item.status) === CONFIRM_SMS_STATUS.scheduleCancelled,
+)
 
 const isConfirmed = computed(() => {
   const item = props.testInputScheduleItem
@@ -25,9 +30,17 @@ const isConfirmed = computed(() => {
   )
 })
 
+const isExpired = computed(
+  () =>
+    props.item !== null &&
+    Boolean(props.item.status) &&
+    !isCancelled.value &&
+    !isConfirmed.value,
+)
+
 const cancelerLabel = computed(() => {
   const scheduleItem = props.testInputScheduleItem
-  if (!scheduleItem) return ''
+  if (!scheduleItem) return '—'
 
   if (scheduleItem.canceller) {
     return formatUserLabel(scheduleItem.canceller)
@@ -38,20 +51,22 @@ const cancelerLabel = computed(() => {
 
 const cancelledAtLabel = computed(() => {
   const scheduleItem = props.testInputScheduleItem
-  if (!scheduleItem) return ''
-  return scheduleItem.canceledAt || scheduleItem.timeConfirm
+  if (!scheduleItem) return '—'
+  return scheduleItem.canceledAt || scheduleItem.timeConfirm || '—'
 })
 </script>
 
 <template>
-  <div>
+  <div class="notification">
     <ResultMessage
-      v-if="item && Number(item.status) === CONFIRM_SMS_STATUS.scheduleCancelled"
+      v-if="isCancelled"
       type="success"
       title="Ca test đã được hủy lịch!"
     >
-      <p>Người hủy lịch: {{ cancelerLabel }}</p>
-      <p>Thời gian: {{ cancelledAtLabel }}.</p>
+      <div class="notification__details">
+        <DetailRow icon="pi pi-user" label="Người hủy lịch" :value="cancelerLabel" />
+        <DetailRow icon="pi pi-clock" label="Thời gian" :value="cancelledAtLabel" />
+      </div>
     </ResultMessage>
 
     <ResultMessage
@@ -59,23 +74,67 @@ const cancelledAtLabel = computed(() => {
       type="success"
       title="Ca test đã được xác nhận!"
     >
-      <p>Người xác nhận: {{ formatUserLabel(testInputScheduleItem?.userCreated ?? null) }}</p>
-      <p>Thời gian: {{ testInputScheduleItem?.timeConfirm }}.</p>
+      <div class="notification__details">
+        <DetailRow
+          icon="pi pi-user"
+          label="Người xác nhận"
+          :value="formatUserLabel(testInputScheduleItem?.userCreated ?? null) || '—'"
+        />
+        <DetailRow
+          icon="pi pi-clock"
+          label="Thời gian"
+          :value="testInputScheduleItem?.timeConfirm || '—'"
+        />
+      </div>
     </ResultMessage>
 
     <ResultMessage
-      v-else-if="item && item.status"
-      type="error"
+      v-else-if="isExpired"
+      type="warning"
       title="Ca test đã hết hiệu lực xác nhận!"
-    />
+    >
+      <p>Liên kết xác nhận không còn khả dụng hoặc đã quá thời hạn.</p>
+    </ResultMessage>
 
-    <div v-else class="flex justify-center py-4">
+    <ResultMessage
+      v-else-if="!item"
+      type="error"
+      title="Không có thông tin lịch hẹn"
+    >
+      <p>Không tìm thấy dữ liệu lịch hẹn. Vui lòng kiểm tra lại liên kết từ SMS.</p>
+    </ResultMessage>
+
+    <div v-else class="notification__loading">
       <ProgressSpinner
-        style="width: 32px; height: 32px"
-        stroke-width="4"
+        style="width: 36px; height: 36px"
+        stroke-width="3"
         fill="transparent"
         animation-duration="0.8s"
       />
+      <p>Đang kiểm tra trạng thái...</p>
     </div>
   </div>
 </template>
+
+<style scoped>
+.notification__details {
+  margin-top: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.notification__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 0;
+  color: #94a3b8;
+  font-size: 0.8125rem;
+}
+
+.notification__loading p {
+  margin: 0;
+}
+</style>

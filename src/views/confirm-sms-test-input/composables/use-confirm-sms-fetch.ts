@@ -12,17 +12,21 @@ interface ConfirmSmsState {
   error: Ref<boolean>
   setScheduleItem: (item: ConfirmSmsScheduleItem | null) => void
   findSpeakingScheduleItem: (scheduleItems: ConfirmSmsScheduleItem[]) => ConfirmSmsScheduleItem | null
+  setError: (message?: string) => void
+  clearError: () => void
 }
 
 function formatScheduleItemDates(
   item: ConfirmSmsScheduleItem,
   formatDate: ReturnType<typeof useFormatter>['formatDate'],
 ): ConfirmSmsScheduleItem {
+  const formattedSchedule = formatDate(item.schedule, CONFIRM_SMS_DATE_FORMAT) || item.schedule
+
   return {
     ...item,
-    timeConfirm: formatDate(item.timeConfirm, CONFIRM_SMS_DATE_FORMAT),
-    canceledAt: formatDate(item.canceledAt, CONFIRM_SMS_DATE_FORMAT),
-    schedule: formatDate(item.schedule, CONFIRM_SMS_DATE_FORMAT),
+    timeConfirm: formatDate(item.timeConfirm, CONFIRM_SMS_DATE_FORMAT) || item.timeConfirm,
+    canceledAt: formatDate(item.canceledAt, CONFIRM_SMS_DATE_FORMAT) || item.canceledAt,
+    schedule: formattedSchedule,
   }
 }
 
@@ -31,28 +35,41 @@ export function useConfirmSmsFetch(route: RouteLocationNormalizedLoaded, state: 
 
   async function loadConfirmData(): Promise<void> {
     state.loading.value = true
-    state.error.value = false
+    state.clearError()
+    state.data.value = null
+    state.setScheduleItem(null)
 
     try {
       const uuid = typeof route.query.uuid === 'string' ? route.query.uuid : ''
 
       if (!uuid) {
-        state.error.value = true
+        state.setError('Thiếu mã xác nhận trong liên kết. Vui lòng mở lại link từ SMS.')
         return
       }
 
       const response = await fetchConfirmSmsTestInput(uuid)
+
+      if (response.error || !response.data) {
+        state.setError(
+          response.message || 'Không có thông tin lịch hẹn. Liên kết có thể đã hết hạn hoặc không hợp lệ.',
+        )
+        return
+      }
+
       state.data.value = response.data
 
-      const scheduleItems = response.data?.testInputScheduleItem ?? []
+      const scheduleItems = response.data.testInputScheduleItem ?? []
       const scheduleItem = state.findSpeakingScheduleItem(scheduleItems)
 
-      state.setScheduleItem(
-        scheduleItem ? formatScheduleItemDates(scheduleItem, formatDate) : null,
-      )
+      if (!scheduleItem) {
+        state.setError('Không tìm thấy lịch test speaking trong thông tin lịch hẹn.')
+        return
+      }
+
+      state.setScheduleItem(formatScheduleItemDates(scheduleItem, formatDate))
     } catch (fetchError) {
       console.error('Có lỗi xảy ra khi tải dữ liệu:', fetchError)
-      state.error.value = true
+      state.setError('Không thể tải thông tin lịch hẹn. Vui lòng thử lại sau ít phút.')
     } finally {
       state.loading.value = false
     }

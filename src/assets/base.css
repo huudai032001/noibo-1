@@ -6,3 +6,14 @@
 body.login #app {
   min-height: 100vh;
 }
+
+body.confirm-sms {
+  margin: 0;
+  padding: 0;
+  background: #f1f5f9;
+}
+
+body.confirm-sms #app {
+  min-height: 100vh;
+  min-height: 100dvh;
+}

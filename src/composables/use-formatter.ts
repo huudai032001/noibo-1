@@ -65,8 +65,11 @@ export function useFormatter() {
   ): string => {
     if (!date) return ''
 
+    const rawValue = typeof date === 'string' ? date : ''
     const parsedDate = typeof date === 'string' ? parseDateInput(date) : date
-    if (!parsedDate || Number.isNaN(parsedDate.getTime())) return ''
+    if (!parsedDate || Number.isNaN(parsedDate.getTime())) {
+      return rawValue
+    }
 
     const formatString =
       format in DATE_FORMATS ? DATE_FORMATS[format as DateFormatKey] : format

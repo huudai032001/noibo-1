@@ -10,6 +10,7 @@ export function useConfirmSmsState() {
   const testInputScheduleItem = ref<ConfirmSmsScheduleItem | null>(null)
   const loading = ref(true)
   const error = ref(false)
+  const errorMessage = ref('')
   const confirming = ref(false)
 
   const canConfirm = computed(() => {
@@ -48,15 +49,28 @@ export function useConfirmSmsState() {
     }
   }
 
+  function setError(message = ''): void {
+    error.value = true
+    errorMessage.value = message
+  }
+
+  function clearError(): void {
+    error.value = false
+    errorMessage.value = ''
+  }
+
   return {
     data,
     testInputScheduleItem,
     loading,
     error,
+    errorMessage,
     confirming,
     canConfirm,
     setScheduleItem,
     findSpeakingScheduleItem,
     setLocalConfirmFlags,
+    setError,
+    clearError,
   }
 }
