@@ -478,4 +478,9 @@ export const breadcrumbs = {
     { label: 'Cẩm nang vận hành', active: true },
   ],
   '/honors-page': [{ label: 'Application', to: '/' }, { label: 'Vinh danh', active: true }],
+  '/phieu-luong': [
+    { label: 'Application', to: '/' },
+    { label: 'Hành chính' },
+    { label: 'Phiếu lương', active: true },
+  ],
 }

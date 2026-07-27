@@ -95,10 +95,50 @@ export function useFormatter() {
     return `${formatEmployeeCode(user.id)} - ${user.name}`
   }
 
+  const formatCurrency = (value: string | number | null | undefined): string => {
+    if (value === null || value === undefined || value === '') {
+      return '0 đ'
+    }
+
+    if (typeof value === 'string' && value.includes('đ')) {
+      return value
+    }
+
+    const amount = typeof value === 'string' ? Number.parseFloat(value) : value
+    if (Number.isNaN(amount)) {
+      return '0 đ'
+    }
+
+    return amount.toLocaleString('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    })
+  }
+
+  const formatPercent = (value: string | number | null | undefined, fractionDigits = 2): string => {
+    if (value === null || value === undefined || value === '') {
+      return '0%'
+    }
+
+    if (typeof value === 'string' && value.includes('%')) {
+      return value
+    }
+
+    const amount = typeof value === 'string' ? Number.parseFloat(value) : value
+    if (Number.isNaN(amount)) {
+      return '0%'
+    }
+
+    const percentValue = amount <= 1 && amount >= -1 ? amount * 100 : amount
+    return `${percentValue.toFixed(fractionDigits)}%`
+  }
+
   return {
     formatEmployeeCode,
     formatDate,
     parseStringToDateTime,
     formatUserLabel,
+    formatCurrency,
+    formatPercent,
   }
 }

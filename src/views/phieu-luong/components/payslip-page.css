@@ -1,0 +1,27 @@
+/* Shared payslip page tokens */
+.payslip-page {
+  --pl-radius: 12px;
+  --pl-border: #e2e8f0;
+  --pl-surface: #ffffff;
+  --pl-muted: #64748b;
+  --pl-text: #1e293b;
+  --pl-accent: var(--p-primary-color, #3b82f6);
+  --pl-accent-soft: color-mix(in srgb, var(--pl-accent) 8%, white);
+  --pl-section-bg: #f8fafc;
+}
+
+.payslip-card {
+  border: 1px solid var(--pl-border);
+  border-radius: var(--pl-radius);
+  background: var(--pl-surface);
+}
+
+.payslip-card + .payslip-card {
+  margin-top: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .payslip-card + .payslip-card {
+    margin-top: 1.25rem;
+  }
+}
