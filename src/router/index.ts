@@ -2,6 +2,12 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
+    path: '/confirm-sms-test-input',
+    name: 'confirm-sms-test-input',
+    component: () => import('../views/confirm-sms-test-input/ConfirmSmsTestInput.vue'),
+    meta: { title: 'Xác nhận ca test speaking', bodyClass: 'app' },
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('../views/auth/login/Login.vue'),

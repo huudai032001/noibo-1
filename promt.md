@@ -1,6 +1,6 @@
-1. Tai router login
-1.1 Hãy sử dụng tailwind và primeVue để làm toàn bộ coponent
-2. Lấy logic cũ từ: F:\projects\noibo\src\views\pages\auth\Login.Vue toàn
+1. Tai router confirm-sms-test-input
+1.1 Hãy sử dụng tailwind và primeVue để làm toàn bộ component
+2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/confirm-sms-test-input/ConfirmSmsTestInput.vue toàn
    bộ composables/components/models/apis liên quan
 3. Refactor toàn bộ logic sang composables 
 
