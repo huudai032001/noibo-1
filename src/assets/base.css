@@ -1,0 +1,8 @@
+/* Vue mount root — Midone HTML gắn class vào body, không có #app */
+#app {
+  min-height: 100%;
+}
+
+body.login #app {
+  min-height: 100vh;
+}
