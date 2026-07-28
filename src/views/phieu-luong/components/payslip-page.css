@@ -2,11 +2,16 @@
 .payslip-page {
   --pl-radius: 12px;
   --pl-border: #e2e8f0;
+  --pl-divider: #f1f5f9;
   --pl-surface: #ffffff;
+  --pl-surface-muted: #fafbfc;
+  --pl-surface-subtle: #f8fafc;
+  --pl-hover: #f1f5f9;
+  --pl-raised: #ffffff;
   --pl-muted: #64748b;
   --pl-text: #1e293b;
   --pl-accent: var(--p-primary-color, #3b82f6);
-  --pl-accent-soft: color-mix(in srgb, var(--pl-accent) 8%, white);
+  --pl-accent-soft: color-mix(in srgb, var(--pl-accent) 8%, var(--pl-surface));
   --pl-section-bg: #f8fafc;
 }
 

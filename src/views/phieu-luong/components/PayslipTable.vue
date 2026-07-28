@@ -397,7 +397,7 @@ onBeforeUnmount(() => {
   padding: 0.75rem 1rem;
   overflow-x: auto;
   border-bottom: 1px solid var(--pl-border);
-  background: #fafbfc;
+  background: var(--pl-surface-muted);
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -417,7 +417,7 @@ onBeforeUnmount(() => {
   padding: 0.5rem 0.875rem;
   border: 1px solid var(--pl-border);
   border-radius: 999px;
-  background: #fff;
+  background: var(--pl-raised);
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--pl-muted);
@@ -449,7 +449,7 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
   padding: 1rem;
   border-right: 1px solid var(--pl-border);
-  background: #fafbfc;
+  background: var(--pl-surface-muted);
 }
 
 @media (min-width: 1024px) {
@@ -465,7 +465,7 @@ onBeforeUnmount(() => {
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: var(--pl-muted);
 }
 
 .payslip-details__nav-item {
@@ -485,12 +485,12 @@ onBeforeUnmount(() => {
 }
 
 .payslip-details__nav-item:hover {
-  background: #fff;
+  background: var(--pl-raised);
   color: var(--pl-text);
 }
 
 .payslip-details__nav-item.is-active {
-  background: #fff;
+  background: var(--pl-raised);
   color: var(--pl-accent);
   font-weight: 600;
   box-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
@@ -545,7 +545,7 @@ onBeforeUnmount(() => {
   position: sticky;
   top: 0;
   z-index: 1;
-  background: #fff;
+  background: var(--pl-surface);
   box-shadow: 0 1px 0 var(--pl-border);
 }
 
@@ -556,7 +556,7 @@ onBeforeUnmount(() => {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   text-align: left;
-  color: #94a3b8;
+  color: var(--pl-muted);
 }
 
 .payslip-details__table th:nth-child(2) {
@@ -600,8 +600,8 @@ onBeforeUnmount(() => {
   width: 3rem;
   height: 3rem;
   border-radius: 999px;
-  background: #f1f5f9;
+  background: var(--pl-hover);
   font-size: 1.25rem;
-  color: #94a3b8;
+  color: var(--pl-muted);
 }
 </style>

@@ -75,6 +75,8 @@ import {
   Handshake,
   FileSignature,
   Megaphone,
+  Moon,
+  Sun,
 } from '@lucide/vue'
 
 export const iconMap = {
@@ -154,6 +156,8 @@ export const iconMap = {
   Handshake,
   FileSignature,
   Megaphone,
+  Moon,
+  Sun,
 }
 
 export function resolveIcon(name) {
@@ -237,4 +241,6 @@ export {
   Handshake,
   FileSignature,
   Megaphone,
+  Moon,
+  Sun,
 }

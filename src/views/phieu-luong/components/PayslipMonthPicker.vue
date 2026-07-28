@@ -202,7 +202,7 @@ onBeforeUnmount(() => {
   align-items: stretch;
   border: 1px solid var(--pl-border, #e2e8f0);
   border-radius: 12px;
-  background: #fff;
+  background: var(--pl-surface);
   box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
   overflow: hidden;
 }
@@ -213,14 +213,14 @@ onBeforeUnmount(() => {
   justify-content: center;
   width: 2.5rem;
   border: none;
-  background: #f8fafc;
-  color: #64748b;
+  background: var(--pl-surface-subtle);
+  color: var(--pl-muted);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 
 .month-picker__nav:hover:not(:disabled) {
-  background: #f1f5f9;
+  background: var(--pl-hover);
   color: var(--pl-accent, #3b82f6);
 }
 
@@ -238,14 +238,14 @@ onBeforeUnmount(() => {
   border: none;
   border-left: 1px solid var(--pl-border, #e2e8f0);
   border-right: 1px solid var(--pl-border, #e2e8f0);
-  background: #fff;
+  background: var(--pl-surface);
   color: var(--pl-text, #1e293b);
   cursor: pointer;
   transition: background 0.15s;
 }
 
 .month-picker__trigger:hover:not(:disabled) {
-  background: #fafbfc;
+  background: var(--pl-surface-muted);
 }
 
 .month-picker__trigger.is-open {
@@ -272,7 +272,7 @@ onBeforeUnmount(() => {
 
 .month-picker__trigger-caret {
   font-size: 0.625rem;
-  color: #94a3b8;
+  color: var(--pl-muted);
   transition: transform 0.2s;
 }
 
@@ -284,7 +284,7 @@ onBeforeUnmount(() => {
 .month-picker__hint {
   margin: 0.375rem 0 0;
   font-size: 0.6875rem;
-  color: #94a3b8;
+  color: var(--pl-muted);
   text-align: center;
 }
 
@@ -297,7 +297,7 @@ onBeforeUnmount(() => {
   padding: 0.875rem;
   border: 1px solid var(--pl-border, #e2e8f0);
   border-radius: 14px;
-  background: #fff;
+  background: var(--pl-surface);
   box-shadow:
     0 10px 15px -3px rgb(15 23 42 / 0.08),
     0 4px 6px -4px rgb(15 23 42 / 0.06);
@@ -309,7 +309,7 @@ onBeforeUnmount(() => {
   justify-content: space-between;
   margin-bottom: 0.75rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--pl-divider);
 }
 
 .month-picker__year {
@@ -326,8 +326,8 @@ onBeforeUnmount(() => {
   height: 2rem;
   border: 1px solid var(--pl-border, #e2e8f0);
   border-radius: 8px;
-  background: #fff;
-  color: #64748b;
+  background: var(--pl-surface);
+  color: var(--pl-muted);
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
 }
@@ -352,10 +352,10 @@ onBeforeUnmount(() => {
   padding: 0.625rem 0.25rem;
   border: 1px solid transparent;
   border-radius: 10px;
-  background: #f8fafc;
+  background: var(--pl-surface-subtle);
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--pl-text);
   cursor: pointer;
   transition:
     background 0.15s,
@@ -364,8 +364,8 @@ onBeforeUnmount(() => {
 }
 
 .month-picker__month:hover:not(:disabled):not(.is-selected) {
-  background: #f1f5f9;
-  border-color: #e2e8f0;
+  background: var(--pl-hover);
+  border-color: var(--pl-border);
 }
 
 .month-picker__month.is-selected {
@@ -379,3 +379,4 @@ onBeforeUnmount(() => {
   cursor: not-allowed;
 }
 </style>
+

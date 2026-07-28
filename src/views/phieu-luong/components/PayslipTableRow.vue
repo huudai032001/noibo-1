@@ -205,12 +205,12 @@ const hasDetailColumn = computed(
 }
 
 .payslip-row {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--pl-divider);
   transition: background 0.12s;
 }
 
 .payslip-row:hover {
-  background: #fafbfc;
+  background: var(--pl-surface-muted);
 }
 
 .payslip-row--total {
@@ -218,14 +218,14 @@ const hasDetailColumn = computed(
 }
 
 .payslip-row--total:hover {
-  background: color-mix(in srgb, var(--pl-accent) 10%, white);
+  background: color-mix(in srgb, var(--pl-accent) 10%, var(--pl-surface));
 }
 
 .payslip-row--mobile {
   padding: 0.875rem 1rem;
   border: 1px solid var(--pl-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--pl-surface);
 }
 
 .payslip-row--mobile.payslip-row--total {
@@ -304,7 +304,7 @@ const hasDetailColumn = computed(
   gap: 0.25rem;
   padding: 0.125rem 0.5rem;
   border-radius: 999px;
-  background: #f1f5f9;
+  background: var(--pl-hover);
   font-size: 0.6875rem;
   color: var(--pl-muted);
 }
@@ -317,7 +317,7 @@ const hasDetailColumn = computed(
   margin: 0;
   padding: 0.5rem 0.625rem;
   border-radius: 6px;
-  background: #f8fafc;
+  background: var(--pl-surface-subtle);
   font-size: 0.75rem;
   line-height: 1.5;
   color: var(--pl-muted);
@@ -327,7 +327,7 @@ const hasDetailColumn = computed(
 .payslip-row__tooltip {
   margin-left: 0.25rem;
   font-size: 0.75rem;
-  color: color-mix(in srgb, var(--pl-accent) 70%, white);
+  color: color-mix(in srgb, var(--pl-accent) 70%, var(--pl-surface));
   cursor: help;
 }
 

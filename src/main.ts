@@ -10,6 +10,8 @@ import router from './router'
 import ApiService from '@/services/api-service'
 import { useAuthStore } from '@/stores/auth'
 import './assets/base.css'
+import './assets/dark-mode.css'
+import { initTheme } from '@/utils/theme'
 
 const app = createApp(App)
 
@@ -35,13 +37,15 @@ app.use(PrimeVue, {
   theme: {
     preset: EduPreset,
     options: {
-      darkModeSelector: false,
+      darkModeSelector: '.dark-mode',
     },
   },
 })
 app.use(createPinia())
 app.use(router)
 app.use(ToastService)
+
+initTheme()
 
 ApiService.init()
 useAuthStore().initializeAuth()

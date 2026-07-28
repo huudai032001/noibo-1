@@ -12,7 +12,7 @@ const route = useRoute()
 const breadcrumbItems = computed(() => {
   return (
     breadcrumbs[route.path] || [
-      { label: 'Application', to: '/' },
+      { label: 'Edutalk nội bộ', to: '/' },
       { label: route.meta?.title || 'Page', active: true },
     ]
   )

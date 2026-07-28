@@ -203,7 +203,7 @@ function onDateChange(value: Date): void {
 }
 
 .payslip-summary__dot {
-  color: #cbd5e1;
+  color: var(--pl-border);
   font-weight: 400;
   line-height: 1;
 }
@@ -286,7 +286,7 @@ function onDateChange(value: Date): void {
   padding: 0.75rem 1rem;
   border: 1px solid var(--pl-border);
   border-radius: 10px;
-  background: #fafbfc;
+  background: var(--pl-surface-muted);
 }
 
 @media (min-width: 768px) {

@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { RouterLink } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import {
   Search,
   Bell,
@@ -14,7 +15,36 @@ import {
   CreditCard,
 } from '../../utils/icons'
 import Breadcrumb from './Breadcrumb.vue'
+import DarkModeToggle from './DarkModeToggle.vue'
 import logoEdutalk from '@/assets/logo_edutalk.svg'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+const { currentUser } = storeToRefs(authStore)
+
+const avatarLoadFailed = ref(false)
+
+const displayName = computed(() => currentUser.value?.name?.trim() || 'Tài khoản')
+
+const userInitial = computed(() => {
+  const name = currentUser.value?.name?.trim()
+  return name ? name.charAt(0).toUpperCase() : '?'
+})
+
+const avatarUrl = computed(() => currentUser.value?.image?.trim() || '')
+
+const userSubtitle = computed(() => {
+  const user = currentUser.value
+  if (!user) return ''
+
+  const position = user.userPositions?.find((item) => item.position?.trim())?.position?.trim()
+  if (position) return position
+
+  const accountTypeName = user.accountType?.name?.trim()
+  if (accountTypeName) return accountTypeName
+
+  return user.email?.trim() || ''
+})
 
 defineProps({
   breadcrumbItems: {
@@ -41,7 +71,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 
 <template>
   <!-- BEGIN: Top Bar -->
-  <div class="border-b border-theme-24 -mt-10 md:-mt-5 -mx-3 sm:-mx-8 px-3 sm:px-8 pt-3 md:pt-0 mb-2">
+  <div class="layout-header border-b border-theme-24 -mt-10 md:-mt-5 -mx-3 sm:-mx-8 px-3 sm:px-8 pt-3 md:pt-0 mb-2">
     <div class="top-bar-boxed flex items-center">
       <!-- BEGIN: Logo -->
       <RouterLink to="/" class="-intro-x hidden md:flex items-center">
@@ -94,6 +124,10 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
       </div>
       <!-- END: Search -->
 
+      <!-- BEGIN: Dark mode -->
+      <DarkModeToggle class="mr-3 sm:mr-4" />
+      <!-- END: Dark mode -->
+
       <!-- BEGIN: Notifications -->
       <div
         class="intro-x dropdown relative mr-4 sm:mr-6"
@@ -144,15 +178,37 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
       <div class="intro-x dropdown w-8 h-8 relative" :class="{ open: openDropdown === 'account' }">
         <div
           class="dropdown-toggle w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in scale-110 bg-theme-14 text-theme-1 flex items-center justify-center cursor-pointer font-medium"
+          :title="displayName"
           @click.stop="toggle('account')"
         >
-          D
+          <img
+            v-if="avatarUrl && !avatarLoadFailed"
+            :src="avatarUrl"
+            :alt="displayName"
+            class="w-full h-full object-cover"
+            @error="avatarLoadFailed = true"
+          />
+          <span v-else>{{ userInitial }}</span>
         </div>
         <div class="dropdown-box mt-10 absolute w-56 top-0 right-0 z-20" :class="{ show: openDropdown === 'account' }">
           <div class="dropdown-box__content box bg-theme-38 text-white">
-            <div class="p-4 border-b border-theme-40">
-              <div class="font-medium">Denzel Washington</div>
-              <div class="text-xs text-theme-41">Frontend Engineer</div>
+            <div class="p-4 border-b border-theme-40 flex items-center gap-3">
+              <div
+                class="w-10 h-10 flex-none rounded-full overflow-hidden bg-theme-14 text-theme-1 flex items-center justify-center font-medium"
+              >
+                <img
+                  v-if="avatarUrl && !avatarLoadFailed"
+                  :src="avatarUrl"
+                  :alt="displayName"
+                  class="w-full h-full object-cover"
+                  @error="avatarLoadFailed = true"
+                />
+                <span v-else>{{ userInitial }}</span>
+              </div>
+              <div class="min-w-0">
+                <div class="font-medium truncate">{{ displayName }}</div>
+                <div v-if="userSubtitle" class="text-xs text-theme-41 truncate">{{ userSubtitle }}</div>
+              </div>
             </div>
             <div class="p-2">
               <RouterLink

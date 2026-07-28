@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import logoEdutalk from '@/assets/logo_edutalk.svg'
+import DarkModeToggle from './DarkModeToggle.vue'
 
 defineProps({
   description: {
@@ -12,7 +13,10 @@ defineProps({
 
 <template>
   <!-- class "login" gắn trên body (xem router) — giống Midone HTML -->
-  <div class="container sm:px-10">
+  <div class="container sm:px-10 relative">
+    <div class="absolute top-5 right-0 z-10 xl:right-5">
+      <DarkModeToggle compact />
+    </div>
     <div class="block xl:grid grid-cols-2 gap-4">
       <!-- BEGIN: Login Info -->
       <div class="hidden xl:flex flex-col min-h-screen">
