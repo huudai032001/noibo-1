@@ -24,6 +24,6 @@ export const WORK_TIME = {
   morningLate: '08:45:00',
   noon: '12:00:00',
   afternoonStart: '13:30:00',
-  afternoonLate: '13:45:00',
+  afternoonLate: '13:30:00',
   eveningEnd: '19:00:00',
 } as const

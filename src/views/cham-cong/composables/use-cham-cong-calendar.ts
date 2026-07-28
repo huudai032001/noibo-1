@@ -11,7 +11,7 @@ import type {
   ChamCongDayMap,
   ChamCongDayRecord,
 } from '../models/cham-cong.model'
-import { formatShortTime, toDateKey } from '../utils/cham-cong-helpers'
+import { formatShortTime, formatWorkDuration, toDateKey } from '../utils/cham-cong-helpers'
 
 interface ChamCongCalendarState {
   dayMap: Ref<ChamCongDayMap>
@@ -24,6 +24,7 @@ export interface ChamCongDayCellInfo {
   checkOut: string
   hasData: boolean
   timeLabel: string
+  duration: string
 }
 
 export interface ChamCongStatusCounts {
@@ -36,7 +37,7 @@ export interface ChamCongStatusCounts {
 function isLateCheckIn(checkIn: string, userType: number | null): boolean {
   if (userType === ATTENDANCE_TYPE_NO_WARNING) return false
   if (checkIn >= WORK_TIME.morningLate && checkIn < WORK_TIME.noon) return true
-  if (checkIn >= WORK_TIME.afternoonLate) return true
+  if (checkIn > WORK_TIME.afternoonStart) return true
   return false
 }
 
@@ -115,6 +116,7 @@ export function useChamCongCalendar(state: ChamCongCalendarState) {
       checkOut: buildShortCheckOut(entry),
       hasData: Boolean(entry),
       timeLabel: buildTimeLabel(entry),
+      duration: formatWorkDuration(entry?.in, entry?.out, ''),
     }
   }
 

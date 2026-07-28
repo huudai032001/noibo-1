@@ -37,6 +37,7 @@ const emit = defineEmits<{
   flex-direction: column;
   gap: 1rem;
   margin-top: 1rem;
+  margin-bottom: 1rem;
   padding: 1rem 1.25rem;
   border: 1px solid #fecaca;
   border-radius: var(--pl-radius, 12px);

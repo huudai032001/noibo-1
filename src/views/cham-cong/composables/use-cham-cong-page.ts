@@ -7,6 +7,7 @@ import { useChamCongKeyboard } from './use-cham-cong-keyboard'
 import { useChamCongLocale } from './use-cham-cong-locale'
 import { useChamCongPagination } from './use-cham-cong-pagination'
 import { useChamCongState } from './use-cham-cong-state'
+import { useChamCongUrl } from './use-cham-cong-url'
 
 export function useChamCongPage() {
   const state = useChamCongState()
@@ -15,20 +16,34 @@ export function useChamCongPage() {
   const calendar = useChamCongCalendar(state)
   const dialog = useChamCongDialog()
   const pagination = useChamCongPagination()
+  const url = useChamCongUrl(state.selectedDate, (date) => {
+    void handleMonthChange(date, { syncUrl: false })
+  })
 
   useChamCongLocale()
 
-  async function loadForDate(date: Date): Promise<void> {
+  async function loadForDate(date: Date, options: { syncUrl?: boolean } = {}): Promise<void> {
+    const { syncUrl = true } = options
     pagination.resetPagination()
     const params = filter.applySelectedMonth(date)
+    if (syncUrl) {
+      url.syncUrl(new Date(date.getFullYear(), date.getMonth(), 1))
+    }
     await fetch.loadAttendance({ ...params, page: pagination.currentPage.value })
   }
 
-  async function handleMonthChange(date: Date): Promise<void> {
+  async function handleMonthChange(
+    date: Date,
+    options: { syncUrl?: boolean } = {},
+  ): Promise<void> {
+    const { syncUrl = true } = options
     const next = new Date(date.getFullYear(), date.getMonth(), 1)
     state.setSelectedDate(next)
     pagination.resetPagination()
     const params = filter.applySelectedMonth(next)
+    if (syncUrl) {
+      url.syncUrl(next)
+    }
     await fetch.loadAttendance({ ...params, page: pagination.currentPage.value })
   }
 
@@ -76,7 +91,8 @@ export function useChamCongPage() {
   )
 
   onMounted(() => {
-    void loadForDate(new Date())
+    const initialDate = url.initDateFromUrl()
+    void loadForDate(initialDate)
   })
 
   return {

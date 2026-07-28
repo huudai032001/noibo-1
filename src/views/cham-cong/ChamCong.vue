@@ -26,6 +26,34 @@ const {
 } = useChamCongPage()
 
 const hasAnyAttendance = computed(() => Object.keys(dayMap.value).length > 0)
+const todayAttendance = computed(() => {
+  const today = new Date()
+  const inSelectedMonth =
+    selectedDate.value.getFullYear() === today.getFullYear() &&
+    selectedDate.value.getMonth() === today.getMonth()
+
+  if (!inSelectedMonth) {
+    return {
+      isCurrentMonth: false,
+      hasData: false,
+      checkIn: '',
+      checkOut: '',
+      duration: '',
+      status: null,
+    }
+  }
+
+  const info = getDayCellInfo(today.getFullYear(), today.getMonth(), today.getDate())
+
+  return {
+    isCurrentMonth: true,
+    hasData: info.hasData,
+    checkIn: info.checkIn || 'Chưa có',
+    checkOut: info.checkOut || 'Chưa có',
+    duration: info.duration || '',
+    status: info.hasData ? info.status : null,
+  }
+})
 
 function onCalendarModelUpdate(value: Date): void {
   selectedDate.value = value
@@ -33,7 +61,7 @@ function onCalendarModelUpdate(value: Date): void {
 </script>
 
 <template>
-  <div class="space-y-4 py-4 sm:space-y-5 sm:py-5">
+  <div class="space-y-4 py-3 sm:space-y-5 sm:py-4">
     <ChamCongHeroBanner
       :model-value="selectedDate"
       :office-label="officeLabel"
@@ -45,51 +73,55 @@ function onCalendarModelUpdate(value: Date): void {
 
     <div
       v-if="errorMessage && !loading"
-      class="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+      class="relative overflow-hidden rounded-2xl border border-red-200/80 bg-gradient-to-r from-red-50 to-white px-4 py-3.5 shadow-sm sm:px-5"
     >
-      <i class="pi pi-exclamation-triangle mt-0.5 shrink-0" />
-      <div class="min-w-0 flex-1">
-        <p class="font-medium">Không tải được dữ liệu</p>
-        <p class="mt-0.5 text-amber-700/90">{{ errorMessage }}</p>
+      <div class="pointer-events-none absolute right-0 top-0 h-24 w-24 rounded-full bg-red-100/70 blur-2xl" />
+      <div class="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-start gap-3">
+          <span
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-red-600 shadow-sm"
+          >
+            <i class="pi pi-exclamation-circle text-base" />
+          </span>
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-red-800">Không tải được dữ liệu chấm công</p>
+            <p class="mt-1 text-[13px] leading-5 text-red-700/90">{{ errorMessage }}</p>
+          </div>
+        </div>
+        <Button
+          type="button"
+          label="Thử lại"
+          icon="pi pi-refresh"
+          size="small"
+          severity="danger"
+          outlined
+          class="shrink-0 self-start !bg-white/70 sm:self-auto"
+          @click="reload"
+        />
       </div>
-      <Button
-        type="button"
-        label="Thử lại"
-        icon="pi pi-refresh"
-        size="small"
-        severity="secondary"
-        outlined
-        @click="reload"
-      />
     </div>
 
     <section class="box overflow-hidden">
-      <div
-        class="flex flex-col gap-2 border-b border-slate-200/60 px-4 py-3.5 sm:flex-row sm:items-end sm:justify-between sm:px-5"
-      >
-        <div>
-          <h2 class="text-base font-semibold text-slate-800">Lịch chấm công</h2>
-          <p class="mt-0.5 text-sm text-slate-500">
-            Theo dõi giờ vào / ra từng ngày trong tháng
-          </p>
+      <div class="border-b border-slate-200/60 bg-slate-50/60 px-4 py-3.5 sm:px-5">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-base font-semibold text-slate-900">Lịch chấm công</h2>
+            <p class="mt-1 text-sm text-slate-500">
+              Xem nhanh lịch làm việc và giờ vào/ra trong ngày.
+            </p>
+          </div>
         </div>
-        <span
-          v-if="hasAnyAttendance && !loading"
-          class="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#472f92]/10 px-3 py-1 text-xs font-semibold text-[#472f92]"
-        >
-          <span class="h-1.5 w-1.5 rounded-full bg-[#472f92]" />
-          {{ statusCounts.total }} ngày có dữ liệu
-        </span>
       </div>
 
       <ProgressBar v-if="loading" mode="indeterminate" class="h-[2px]" />
 
-      <div class="p-3 sm:p-5">
+      <div class="p-3 sm:p-4">
         <ChamCongCalendar
           :model-value="selectedDate"
           :loading="loading"
           :has-attendance="hasAnyAttendance"
           :status-counts="statusCounts"
+          :today-attendance="todayAttendance"
           :get-day-cell-info="getDayCellInfo"
           @update:model-value="onCalendarModelUpdate"
           @month-change="handleCalendarMonthChange"
