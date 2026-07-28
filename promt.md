@@ -1,6 +1,5 @@
-1. Tại router phieu-luong nếu chưa có thì tạo mới
-1.1 Hãy sử dụng tailwind và primeVue để làm toàn bộ component
-2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/human-resource/phieu-luong.vue toàn
+1. Tại router cham-cong nếu chưa có thì tạo mới
+2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/human-resource/cham-cong-nhan-su.vue toàn
    bộ composables/components/models/apis liên quan
 3. Refactor toàn bộ logic sang composables 
 
@@ -41,3 +40,5 @@
 11. các loại format hãy sử dụng từ use-formatter.ts
 12. khi call API params luôn là snake_cased
 13. Khi mà ở trang chi tiết cần có UI UX để quay lại trang trước
+14 Hãy sử dụng tailwind để css và primeVue để làm toàn bộ component tuyệt đối không dùng manual css nếu có thì phải hỏi trước
+15. Nội dung nếu có thì dùng tiếng việt nhé

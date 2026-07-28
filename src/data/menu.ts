@@ -427,6 +427,11 @@ export const sideMenuItems = topMenuItems
 
 export const breadcrumbs = {
   '/work-calendar': [{ label: 'Application', to: '/' }, { label: 'Đăng ký lịch làm', active: true }],
+  '/cham-cong': [
+    { label: 'Application', to: '/' },
+    { label: 'Hành chính' },
+    { label: 'Chấm công', active: true },
+  ],
   '/attendance-calendar': [
     { label: 'Application', to: '/' },
     { label: 'Chấm công' },

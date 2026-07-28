@@ -37,6 +37,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Phiếu lương' },
       },
       {
+        path: 'cham-cong',
+        name: 'cham-cong',
+        component: () => import('../views/cham-cong/ChamCong.vue'),
+        meta: { title: 'Chấm công' },
+      },
+      {
         path: 'inbox',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Hộp thư' },
