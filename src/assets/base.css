@@ -1,6 +1,62 @@
+/* ── Theme CSS Variables ── */
+:root {
+  --app-primary: #472f92;
+  --app-primary-rgb: 71, 47, 146;
+  --app-primary-hover: #3d2780;
+  --app-primary-light: rgba(71, 47, 146, 0.08);
+  --app-primary-lighter: rgba(71, 47, 146, 0.04);
+}
+
 /* Vue mount root — Midone HTML gắn class vào body, không có #app */
 #app {
   min-height: 100%;
+}
+
+/* Background image overlay when user sets an event background */
+/* ── Theme utility classes for dynamic primary color ── */
+.cc-success-surface {
+  border-color: rgba(var(--app-primary-rgb, 71, 47, 146), 0.2);
+  border-left-color: var(--app-primary, #472f92);
+  background: rgba(var(--app-primary-rgb, 71, 47, 146), 0.04);
+}
+
+.cc-success-surface:hover {
+  background: rgba(var(--app-primary-rgb, 71, 47, 146), 0.08);
+}
+
+.cc-swatch-primary {
+  background-color: var(--app-primary, #472f92);
+}
+
+.cc-text-primary {
+  color: var(--app-primary, #472f92);
+}
+
+.cc-bg-primary {
+  background-color: var(--app-primary, #472f92);
+}
+
+.cc-bg-primary-light {
+  background: rgba(var(--app-primary-rgb, 71, 47, 146), 0.08);
+}
+
+.cc-border-primary {
+  border-color: var(--app-primary, #472f92);
+}
+
+/* Background image overlay */
+html.has-bg-image body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--app-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 0.12;
+  pointer-events: none;
 }
 
 body.login #app {

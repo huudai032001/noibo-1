@@ -16,6 +16,7 @@ import {
 } from '../../utils/icons'
 import Breadcrumb from './Breadcrumb.vue'
 import DarkModeToggle from './DarkModeToggle.vue'
+import ThemeSettingsPanel from './ThemeSettingsPanel.vue'
 import logoEdutalk from '@/assets/logo_edutalk.svg'
 import { useAuthStore } from '@/stores/auth'
 
@@ -123,6 +124,10 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
         </div>
       </div>
       <!-- END: Search -->
+
+      <!-- BEGIN: Theme Settings -->
+      <ThemeSettingsPanel class="intro-x mr-3 sm:mr-4" />
+      <!-- END: Theme Settings -->
 
       <!-- BEGIN: Dark mode -->
       <DarkModeToggle class="mr-3 sm:mr-4" />

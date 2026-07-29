@@ -162,7 +162,7 @@ function goThisMonth(): void {
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #472f92;
+  color: var(--app-primary, #472f92);
 }
 
 .attendance-summary__dot {

@@ -222,7 +222,7 @@ onBeforeUnmount(() => {
 
 .month-picker__nav:hover:not(:disabled) {
   background: #f1f5f9;
-  color: #472f92;
+  color: var(--app-primary, #472f92);
 }
 
 .month-picker__nav:disabled {
@@ -250,8 +250,8 @@ onBeforeUnmount(() => {
 }
 
 .month-picker__trigger.is-open {
-  background: rgb(71 47 146 / 0.06);
-  color: #472f92;
+  background: var(--app-primary-light);
+  color: var(--app-primary, #472f92);
 }
 
 .month-picker__trigger:disabled {
@@ -261,7 +261,7 @@ onBeforeUnmount(() => {
 
 .month-picker__trigger-icon {
   font-size: 0.875rem;
-  color: #472f92;
+  color: var(--app-primary, #472f92);
 }
 
 .month-picker__trigger-label {
@@ -279,7 +279,7 @@ onBeforeUnmount(() => {
 
 .month-picker__trigger.is-open .month-picker__trigger-caret {
   transform: rotate(180deg);
-  color: #472f92;
+  color: var(--app-primary, #472f92);
 }
 
 .month-picker__panel {
@@ -327,8 +327,8 @@ onBeforeUnmount(() => {
 }
 
 .month-picker__year-nav:hover:not(:disabled) {
-  border-color: rgb(71 47 146 / 0.35);
-  color: #472f92;
+  border-color: rgba(var(--app-primary-rgb, 71, 47, 146), 0.35);
+  color: var(--app-primary, #472f92);
 }
 
 .month-picker__year-nav:disabled {
@@ -363,9 +363,9 @@ onBeforeUnmount(() => {
 }
 
 .month-picker__month.is-selected {
-  border-color: #472f92;
-  background: rgb(71 47 146 / 0.08);
-  color: #472f92;
+  border-color: var(--app-primary, #472f92);
+  background: rgba(var(--app-primary-rgb, 71, 47, 146), 0.08);
+  color: var(--app-primary, #472f92);
 }
 
 .month-picker__month.is-disabled {

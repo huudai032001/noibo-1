@@ -41,7 +41,7 @@ export function attendanceStatusTone(status: AttendanceStatus): string {
 /** Mobile list row — left accent + soft fill */
 export function attendanceCellSurface(status: AttendanceStatus): string {
   if (status === ATTENDANCE_STATUS.success) {
-    return 'border border-[#472f92]/20 border-l-[3px] border-l-[#472f92] bg-[#472f92]/[0.04] hover:bg-[#472f92]/[0.08]'
+    return 'border border-l-[3px] cc-success-surface'
   }
   if (status === ATTENDANCE_STATUS.warning) {
     return 'border border-amber-200/80 border-l-[3px] border-l-amber-500 bg-amber-50 hover:bg-amber-100/80'
@@ -98,14 +98,14 @@ export function attendanceStatusDotStyle(status: AttendanceStatus): Record<strin
 
 /** Legend swatch matching solid calendar cells */
 export function attendanceLegendSwatch(status: AttendanceStatus): string {
-  if (status === ATTENDANCE_STATUS.success) return 'bg-[#472f92]'
+  if (status === ATTENDANCE_STATUS.success) return 'cc-swatch-primary'
   if (status === ATTENDANCE_STATUS.warning) return 'bg-amber-600'
   if (status === ATTENDANCE_STATUS.danger) return 'bg-rose-600'
   return 'bg-slate-200'
 }
 
 export function attendanceStatusAccent(status: AttendanceStatus): string {
-  if (status === ATTENDANCE_STATUS.success) return 'text-[#472f92]'
+  if (status === ATTENDANCE_STATUS.success) return 'cc-text-primary'
   if (status === ATTENDANCE_STATUS.warning) return 'text-amber-700'
   if (status === ATTENDANCE_STATUS.danger) return 'text-rose-700'
   return 'text-slate-500'

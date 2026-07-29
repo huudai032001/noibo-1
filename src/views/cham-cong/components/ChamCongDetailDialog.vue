@@ -289,8 +289,8 @@ function closeDialog(): void {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 10px;
-  background: #f0ecf9;
-  color: #472f92;
+  background: var(--app-primary-light, #f0ecf9);
+  color: var(--app-primary, #472f92);
   font-size: 0.875rem;
 }
 

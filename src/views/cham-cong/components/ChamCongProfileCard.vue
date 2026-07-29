@@ -30,16 +30,16 @@ const initial = computed(() => {
 
 <template>
   <div class="box h-full overflow-hidden">
-    <div class="border-b border-slate-200/60 bg-gradient-to-br from-[#472f92]/[0.08] to-white px-5 py-5 text-center">
+    <div class="border-b border-slate-200/60 cc-bg-primary-light px-5 py-5 text-center">
       <div
-        class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#472f92] text-xl font-semibold text-white shadow-sm"
+        class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full cc-bg-primary text-xl font-semibold text-white shadow-sm"
         aria-hidden="true"
       >
         <span v-if="loading" class="h-5 w-5 animate-pulse rounded bg-white/40" />
         <template v-else>{{ initial }}</template>
       </div>
       <h2 class="text-base font-medium text-slate-800">Chấm công nhân viên</h2>
-      <p class="mt-1 text-sm font-semibold text-[#472f92]">
+      <p class="mt-1 text-sm font-semibold cc-text-primary">
         <span v-if="loading" class="inline-block h-4 w-28 animate-pulse rounded bg-slate-200" />
         <template v-else>{{ displayName }}</template>
       </p>

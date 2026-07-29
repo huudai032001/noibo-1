@@ -15,10 +15,10 @@ const daysLabel = computed(() => formatAttendanceNumber(props.totalDayWork))
 <template>
   <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
     <div
-      class="flex items-center gap-3 rounded-xl border border-[#472f92]/15 bg-gradient-to-br from-[#472f92]/[0.06] to-white px-4 py-3"
+      class="flex items-center gap-3 rounded-xl border cc-border-primary/15 cc-bg-primary-light px-4 py-3"
     >
       <div
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#472f92]/10 text-[#472f92]"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg cc-bg-primary-light cc-text-primary"
       >
         <i class="pi pi-clock text-base" />
       </div>

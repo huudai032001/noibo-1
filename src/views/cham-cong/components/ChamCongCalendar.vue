@@ -585,7 +585,7 @@ function timeRangeLabel(info: DayCellInfo): string {
   flex-shrink: 0;
   border-radius: 0.65rem;
   background: #f8fafc;
-  color: #472f92;
+  color: var(--app-primary, #472f92);
   border: 1px solid #e2e8f0;
 }
 
@@ -676,11 +676,11 @@ function timeRangeLabel(info: DayCellInfo): string {
 }
 
 .attendance-calendar__cell.is-success {
-  background: #472f92;
+  background: var(--app-primary, #472f92);
 }
 
 .attendance-calendar__cell.is-success:hover:not(:disabled) {
-  background: #3d2780;
+  background: var(--app-primary-hover, #3d2780);
 }
 
 .attendance-calendar__cell.is-warning {
