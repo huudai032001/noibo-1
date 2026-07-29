@@ -131,7 +131,7 @@ function goThisMonth(): void {
 
 @media (min-width: 768px) {
   .attendance-summary {
-    padding: 1.25rem 1.75rem;
+    padding: 1.5rem 1.75rem;
   }
 }
 

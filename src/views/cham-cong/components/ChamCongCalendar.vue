@@ -7,6 +7,7 @@ import type { ChamCongStatusCounts } from '../composables/use-cham-cong-calendar
 import {
   attendanceCellSurface,
   attendanceGridCellSurface,
+  attendanceLegendSwatch,
   attendanceStatusDot,
   attendanceStatusLabel,
   attendanceStatusTone,
@@ -103,30 +104,24 @@ const isCurrentMonth = computed(
   () => year.value === today.getFullYear() && month.value === today.getMonth(),
 )
 
-const canGoNext = computed(() => {
-  const next = new Date(year.value, month.value + 1, 1)
-  const max = new Date(today.getFullYear(), today.getMonth(), 1)
-  return next.getTime() <= max.getTime()
-})
-
 const totalDays = computed(() => props.statusCounts?.total ?? 0)
 const legendItems = computed(() => [
   {
     key: ATTENDANCE_STATUS.success,
     label: attendanceStatusLabel(ATTENDANCE_STATUS.success),
-    hint: 'Đã chấm công đầy đủ và đúng giờ',
+    hint: 'Đầy đủ và đúng giờ',
     count: props.statusCounts?.success ?? 0,
   },
   {
     key: ATTENDANCE_STATUS.warning,
     label: attendanceStatusLabel(ATTENDANCE_STATUS.warning),
-    hint: 'Vào từ 08:45 đến trước 12:00 hoặc sau 13:30',
+    hint: 'Vào muộn theo quy định',
     count: props.statusCounts?.warning ?? 0,
   },
   {
     key: ATTENDANCE_STATUS.danger,
     label: attendanceStatusLabel(ATTENDANCE_STATUS.danger),
-    hint: 'Thiếu giờ vào hoặc giờ ra trong ngày',
+    hint: 'Thiếu giờ vào hoặc giờ ra',
     count: props.statusCounts?.danger ?? 0,
   },
 ])
@@ -134,14 +129,6 @@ const legendItems = computed(() => [
 function weekdayLabel(y: number, m: number, d: number): string {
   const index = (new Date(y, m, d).getDay() + 6) % 7
   return WEEKDAY_LABELS[index] ?? ''
-}
-
-function shiftMonth(delta: number): void {
-  const next = new Date(year.value, month.value + delta, 1)
-  const max = new Date(today.getFullYear(), today.getMonth(), 1)
-  if (next.getTime() > max.getTime()) return
-  emit('update:modelValue', next)
-  emit('month-change', { month: next.getMonth() + 1, year: next.getFullYear() })
 }
 
 function goThisMonth(): void {
@@ -160,594 +147,679 @@ function onSelectListDay(y: number, m: number, d: number): void {
 }
 
 function cellClasses(cell: GridCellView): string {
-  if (cell.outside) {
-    return 'bg-slate-50/70 opacity-35 pointer-events-none'
+  if (cell.outside) return 'is-outside'
+
+  if (cell.today) {
+    return cell.info.hasData
+      ? 'is-filled is-today cursor-pointer'
+      : 'is-today is-today-empty'
   }
 
   if (cell.info.hasData) {
     return `${attendanceGridCellSurface(cell.info.status)} cursor-pointer`
   }
 
-  if (cell.today) {
-    return 'border border-dashed border-[#472f92]/30 bg-[#472f92]/[0.03]'
-  }
-
-  if (cell.weekend) {
-    return 'bg-slate-50/90'
-  }
-
-  return 'bg-white hover:bg-slate-50/80'
+  if (cell.weekend) return 'is-weekend'
+  return 'is-empty'
 }
 
-function dayNumberClass(cell: GridCellView): string {
-  if (cell.outside) return 'text-slate-400'
-  if (cell.today && cell.info.hasData) return 'bg-white/80 text-slate-900 shadow-sm'
-  if (cell.today) return 'bg-[#472f92] text-white shadow-sm shadow-[#472f92]/20'
-  if (cell.info.hasData) return 'bg-white/75 text-slate-900'
-  if (cell.weekend) return 'text-slate-400'
-  return 'text-slate-700'
+function timeRangeLabel(info: DayCellInfo): string {
+  if (info.timeLabel) return info.timeLabel
+  if (!info.checkIn && !info.checkOut) return ''
+  return `${info.checkIn || '...'} - ${info.checkOut || '...'}`
 }
 </script>
 
 <template>
-  <div class="relative">
+  <div class="attendance-calendar">
+    <!-- Single header: title + today + legend -->
+    <header class="attendance-calendar__header">
+      <div class="attendance-calendar__heading">
+        <h2 class="attendance-calendar__title">Lịch chấm công</h2>
+        <template v-if="loading">
+          <span class="attendance-calendar__skeleton attendance-calendar__skeleton--meta" />
+        </template>
+        <p v-else-if="totalDays > 0" class="attendance-calendar__meta">
+          {{ totalDays }} ngày có dữ liệu
+        </p>
+      </div>
+
+      <div
+        v-if="loading && props.todayAttendance?.isCurrentMonth"
+        class="attendance-calendar__today"
+      >
+        <span class="attendance-calendar__skeleton attendance-calendar__skeleton--badge" />
+        <span class="attendance-calendar__skeleton attendance-calendar__skeleton--today-item" />
+        <span class="attendance-calendar__skeleton attendance-calendar__skeleton--today-item" />
+      </div>
+      <div
+        v-else-if="props.todayAttendance?.isCurrentMonth"
+        class="attendance-calendar__today"
+      >
+        <span class="attendance-calendar__today-badge">
+          <span
+            class="attendance-calendar__today-dot"
+            :class="
+              props.todayAttendance?.status
+                ? attendanceStatusDot(props.todayAttendance.status)
+                : 'bg-slate-300'
+            "
+          />
+          Hôm nay
+        </span>
+        <template v-if="props.todayAttendance?.hasData">
+          <span class="attendance-calendar__today-item tabular-nums">
+            <span class="text-slate-400">Vào</span>
+            {{ props.todayAttendance.checkIn }}
+          </span>
+          <span class="attendance-calendar__today-sep" aria-hidden="true">·</span>
+          <span class="attendance-calendar__today-item tabular-nums">
+            <span class="text-slate-400">Ra</span>
+            {{ props.todayAttendance.checkOut }}
+          </span>
+          <template v-if="props.todayAttendance.duration">
+            <span class="attendance-calendar__today-sep" aria-hidden="true">·</span>
+            <span class="attendance-calendar__today-item tabular-nums">
+              <span class="text-slate-400">Tổng</span>
+              {{ props.todayAttendance.duration }}
+            </span>
+          </template>
+        </template>
+        <span v-else class="attendance-calendar__today-empty">Chưa chấm công</span>
+      </div>
+    </header>
+
+    <!-- Loading skeleton -->
     <div
       v-if="loading"
-      class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-xl bg-white/85 backdrop-blur-[1px]"
+      class="attendance-calendar__body"
+      aria-busy="true"
+      aria-label="Đang tải lịch chấm công"
     >
-      <i class="pi pi-spin pi-spinner text-xl text-[#472f92]" />
-      <p class="text-sm text-slate-500">Đang tải lịch chấm công...</p>
+      <div class="attendance-calendar__legend">
+        <span
+          v-for="n in 4"
+          :key="`legend-skel-${n}`"
+          class="attendance-calendar__skeleton attendance-calendar__skeleton--legend"
+        />
+      </div>
+
+      <div class="space-y-2 lg:hidden">
+        <div
+          v-for="n in 5"
+          :key="`list-skel-${n}`"
+          class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-3"
+        >
+          <span class="attendance-calendar__skeleton attendance-calendar__skeleton--avatar" />
+          <div class="min-w-0 flex-1 space-y-2">
+            <span class="attendance-calendar__skeleton attendance-calendar__skeleton--line-sm" />
+            <span class="attendance-calendar__skeleton attendance-calendar__skeleton--line-md" />
+          </div>
+        </div>
+      </div>
+
+      <div class="hidden lg:block">
+        <div class="attendance-calendar__desktop">
+          <div class="attendance-calendar__weekday-row">
+            <div
+              v-for="(label, index) in WEEKDAY_LABELS"
+              :key="`skel-wd-${label}`"
+              class="attendance-calendar__weekday"
+              :class="index >= 5 ? 'is-weekend-label' : ''"
+            >
+              {{ index === 6 ? 'Chủ nhật' : `Thứ ${index + 2}` }}
+            </div>
+          </div>
+          <div class="attendance-calendar__grid">
+            <div
+              v-for="cell in gridDays"
+              :key="`skel-${cell.dateKey}`"
+              class="attendance-calendar__cell attendance-calendar__cell--skeleton"
+              :class="cell.outside ? 'is-outside' : ''"
+            >
+              <span
+                class="attendance-calendar__skeleton attendance-calendar__skeleton--day"
+                :class="cell.outside ? 'is-muted' : ''"
+              />
+              <span
+                v-if="!cell.outside"
+                class="attendance-calendar__skeleton attendance-calendar__skeleton--time"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="attendance-calendar">
-      <div class="attendance-calendar__toolbar">
-          <button
-            type="button"
-            class="attendance-calendar__nav"
-            aria-label="Tháng trước"
-            :disabled="loading"
-            @click="shiftMonth(-1)"
-          >
-            <i class="pi pi-chevron-left text-xs" />
-          </button>
+    <div v-else class="attendance-calendar__body">
+      <div v-if="hasAttendance" class="attendance-calendar__legend">
+        <div
+          v-for="item in legendItems"
+          :key="item.key"
+          class="attendance-calendar__legend-item"
+          :title="item.hint"
+        >
+          <span
+            class="attendance-calendar__legend-swatch"
+            :class="attendanceLegendSwatch(item.key)"
+          />
+          <span class="attendance-calendar__legend-label">{{ item.label }}</span>
+          <span class="attendance-calendar__legend-count">{{ item.count }}</span>
+        </div>
+        <div class="attendance-calendar__legend-item" title="Ngày hiện tại">
+          <span class="attendance-calendar__legend-swatch bg-orange-500" />
+          <span class="attendance-calendar__legend-label">Hôm nay</span>
+        </div>
+      </div>
 
-          <div class="attendance-calendar__month">
-            <p class="attendance-calendar__month-title">{{ monthTitle }}</p>
-            <p v-if="!loading && totalDays > 0" class="attendance-calendar__month-meta">
-              {{ totalDays }} ngày có dữ liệu
-            </p>
-          </div>
-
-          <button
-            type="button"
-            class="attendance-calendar__nav"
-            aria-label="Tháng sau"
-            :disabled="loading || !canGoNext"
-            @click="shiftMonth(1)"
-          >
-            <i class="pi pi-chevron-right text-xs" />
-          </button>
-
+      <div
+        v-if="hasAttendance === false"
+        class="attendance-calendar__empty"
+      >
+        <div class="attendance-calendar__empty-icon">
+          <i class="pi pi-calendar-times" />
+        </div>
+        <div class="min-w-0">
+          <p class="text-sm font-semibold text-slate-700">Chưa có dữ liệu chấm công</p>
+          <p class="mt-0.5 text-sm text-slate-500">
+            {{ monthTitle }} chưa ghi nhận giờ vào/ra. Dùng bộ chọn tháng phía trên để xem tháng khác.
+          </p>
           <Button
+            v-if="!isCurrentMonth"
             type="button"
-            label="Tháng này"
+            label="Về tháng này"
             size="small"
-            severity="secondary"
-            outlined
-            class="attendance-calendar__current-btn !hidden !bg-white sm:!inline-flex"
-            :disabled="loading || isCurrentMonth"
+            link
+            class="!mt-1 !px-0"
             @click="goThisMonth"
           />
         </div>
-
-        <div v-if="props.todayAttendance?.isCurrentMonth" class="attendance-calendar__today">
-          <div
-            class="attendance-calendar__today-badge"
-          >
-            <span
-              class="attendance-calendar__today-dot"
-              :class="
-                props.todayAttendance?.status
-                  ? attendanceStatusDot(props.todayAttendance.status)
-                  : 'bg-slate-300'
-              "
-            />
-            Hôm nay
-          </div>
-          <template v-if="props.todayAttendance?.hasData">
-            <p class="attendance-calendar__today-item">
-              <span class="text-slate-400">Vào:</span>
-              <span class="font-semibold text-slate-900">{{ props.todayAttendance.checkIn }}</span>
-            </p>
-            <p class="attendance-calendar__today-item">
-              <span class="text-slate-400">Ra:</span>
-              <span class="font-semibold text-slate-900">{{ props.todayAttendance.checkOut }}</span>
-            </p>
-            <p
-              v-if="props.todayAttendance.duration"
-              class="attendance-calendar__today-item"
-            >
-              <span class="text-slate-400">Tổng:</span>
-              <span class="font-semibold text-slate-900">{{ props.todayAttendance.duration }}</span>
-            </p>
-          </template>
-          <p v-else class="attendance-calendar__today-empty">Hôm nay chưa có dữ liệu chấm công.</p>
-        </div>
       </div>
 
-    <div
-      v-if="hasAttendance"
-      class="mb-3 grid grid-cols-1 gap-2.5 md:grid-cols-3"
-    >
-      <div
-        v-for="item in legendItems"
-        :key="item.key"
-        class="rounded-2xl border bg-white px-4 py-3 shadow-sm"
-        :class="attendanceStatusTone(item.key)"
-      >
-        <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0">
-            <div class="inline-flex items-center gap-2">
-              <span class="h-2.5 w-2.5 rounded-full" :class="attendanceStatusDot(item.key)" />
-              <p class="text-sm font-semibold">{{ item.label }}</p>
-            </div>
-            <p class="mt-1 text-xs leading-5 opacity-80">{{ item.hint }}</p>
-          </div>
-          <span class="rounded-full bg-white/80 px-2.5 py-1 text-sm font-bold shadow-sm">
-            {{ item.count }}
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Empty state -->
-    <div
-      v-if="!loading && hasAttendance === false"
-      class="mb-3 flex items-start gap-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-4 py-4"
-    >
-      <div
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[#472f92] shadow-sm"
-      >
-        <i class="pi pi-calendar-times" />
-      </div>
-      <div class="min-w-0">
-        <p class="text-sm font-semibold text-slate-700">Chưa có dữ liệu chấm công</p>
-        <p class="mt-1 text-sm leading-relaxed text-slate-500">
-          {{ monthTitle }} chưa ghi nhận giờ vào/ra. Chọn tháng khác để xem lịch sử.
-        </p>
-        <Button
-          v-if="!isCurrentMonth"
+      <div v-if="hasAttendance" class="space-y-2 lg:hidden">
+        <button
+          v-for="row in attendanceDays"
+          :key="`list-${row.dateKey}`"
           type="button"
-          label="Về tháng này"
-          size="small"
-          link
-          class="!mt-1 !px-0"
-          @click="goThisMonth"
-        />
-      </div>
-    </div>
-
-    <!-- Mobile list -->
-    <div v-if="hasAttendance" class="space-y-2.5 lg:hidden">
-      <button
-        v-for="row in attendanceDays"
-        :key="`list-${row.dateKey}`"
-        type="button"
-        class="group flex w-full items-center gap-3 rounded-2xl border bg-white px-3.5 py-3.5 text-left shadow-sm transition active:scale-[0.99]"
-        :class="attendanceCellSurface(row.status)"
-        @click="onSelectListDay(row.year, row.month, row.day)"
-      >
-        <div
-          class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-white shadow-sm"
+          class="group flex w-full items-center gap-3 rounded-xl border bg-white px-3 py-3 text-left transition active:scale-[0.99]"
+          :class="attendanceCellSurface(row.status)"
+          @click="onSelectListDay(row.year, row.month, row.day)"
         >
-          <span class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-            {{ weekdayLabel(row.year, row.month, row.day) }}
-          </span>
-          <span
-            class="text-lg font-bold leading-none"
-            :class="row.today ? 'text-[#472f92]' : 'text-slate-800'"
-          >
-            {{ row.day }}
-          </span>
-        </div>
-
-        <div class="min-w-0 flex-1">
-          <div class="flex flex-wrap items-center gap-2">
-            <span
-              class="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-medium"
-              :class="attendanceStatusTone(row.status)"
-            >
-              <span class="h-1.5 w-1.5 rounded-full" :class="attendanceStatusDot(row.status)" />
-              {{ attendanceStatusLabel(row.status) }}
-            </span>
-            <span
-              v-if="row.today"
-              class="rounded-full bg-[#472f92]/10 px-2 py-0.5 text-[10px] font-semibold text-[#472f92]"
-            >
-              Hôm nay
-            </span>
-            <span
-              v-if="row.duration"
-              class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold tabular-nums text-slate-600"
-            >
-              {{ row.duration }}
-            </span>
-          </div>
-          <div class="mt-1.5 flex items-center gap-3 text-sm tabular-nums">
-            <span class="inline-flex items-baseline gap-1">
-              <span class="text-[11px] font-medium text-slate-400">Vào</span>
-              <span class="font-semibold text-slate-800">{{ row.checkIn }}</span>
-            </span>
-            <span class="h-3 w-px bg-slate-200" aria-hidden="true" />
-            <span class="inline-flex items-baseline gap-1">
-              <span class="text-[11px] font-medium text-slate-400">Ra</span>
-              <span class="font-semibold text-slate-800">{{ row.checkOut }}</span>
-            </span>
-          </div>
-          <p class="mt-1.5 text-xs text-slate-500">
-            {{
-              row.status === ATTENDANCE_STATUS.warning
-                ? 'Đi muộn theo khung giờ quy định'
-                : row.status === ATTENDANCE_STATUS.danger
-                  ? 'Thiếu giờ vào hoặc giờ ra'
-                  : 'Nhấn để xem chi tiết ngày công'
-            }}
-          </p>
-        </div>
-
-        <i
-          class="pi pi-chevron-right text-xs text-slate-300 transition group-hover:text-slate-500"
-        />
-      </button>
-    </div>
-
-    <div class="hidden lg:block">
-      <div class="attendance-calendar__desktop">
-        <div class="attendance-calendar__weekday-row">
           <div
-            v-for="(label, index) in WEEKDAY_LABELS"
-            :key="label"
-            class="attendance-calendar__weekday"
-            :class="index >= 5 ? 'text-slate-300' : 'text-slate-500'"
+            class="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-lg bg-white shadow-sm"
           >
-            {{ index === 6 ? 'Chủ nhật' : `Thứ ${index + 2}` }}
+            <span class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+              {{ weekdayLabel(row.year, row.month, row.day) }}
+            </span>
+            <span
+              class="text-base font-bold leading-none"
+              :class="row.today ? 'text-orange-600' : 'text-slate-800'"
+            >
+              {{ row.day }}
+            </span>
           </div>
-        </div>
 
-        <div class="attendance-calendar__grid">
-          <button
-            v-for="cell in gridDays"
-            :key="cell.dateKey"
-            type="button"
-            class="attendance-calendar__cell"
-            :class="cellClasses(cell)"
-            :disabled="cell.outside || !cell.info.hasData"
-            :title="
-              cell.info.hasData
-                ? `${attendanceStatusLabel(cell.info.status)} · ${cell.info.checkIn} – ${cell.info.checkOut}`
-                : undefined
-            "
-            :aria-label="
-              cell.info.hasData
-                ? `Ngày ${cell.day}, ${attendanceStatusLabel(cell.info.status)}`
-                : `Ngày ${cell.day}`
-            "
-            @click="onSelectDay(cell)"
-          >
-            <div class="attendance-calendar__cell-head">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-1.5">
               <span
-                class="attendance-calendar__day-number"
-                :class="dayNumberClass(cell)"
+                class="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-medium"
+                :class="attendanceStatusTone(row.status)"
               >
+                <span class="h-1.5 w-1.5 rounded-full" :class="attendanceStatusDot(row.status)" />
+                {{ attendanceStatusLabel(row.status) }}
+              </span>
+              <span
+                v-if="row.today"
+                class="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-semibold text-orange-700"
+              >
+                Hôm nay
+              </span>
+              <span
+                v-if="row.duration"
+                class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold tabular-nums text-slate-600"
+              >
+                {{ row.duration }}
+              </span>
+            </div>
+            <div class="mt-1 flex items-center gap-2.5 text-sm tabular-nums">
+              <span class="inline-flex items-baseline gap-1">
+                <span class="text-[11px] font-medium text-slate-400">Vào</span>
+                <span class="font-semibold text-slate-800">{{ row.checkIn }}</span>
+              </span>
+              <span class="h-3 w-px bg-slate-200" aria-hidden="true" />
+              <span class="inline-flex items-baseline gap-1">
+                <span class="text-[11px] font-medium text-slate-400">Ra</span>
+                <span class="font-semibold text-slate-800">{{ row.checkOut }}</span>
+              </span>
+            </div>
+          </div>
+
+          <i class="pi pi-chevron-right text-xs text-slate-300" />
+        </button>
+      </div>
+
+      <div v-if="hasAttendance" class="hidden lg:block">
+        <div class="attendance-calendar__desktop">
+          <div class="attendance-calendar__weekday-row">
+            <div
+              v-for="(label, index) in WEEKDAY_LABELS"
+              :key="label"
+              class="attendance-calendar__weekday"
+              :class="index >= 5 ? 'is-weekend-label' : ''"
+            >
+              {{ index === 6 ? 'Chủ nhật' : `Thứ ${index + 2}` }}
+            </div>
+          </div>
+
+          <div class="attendance-calendar__grid">
+            <button
+              v-for="cell in gridDays"
+              :key="cell.dateKey"
+              type="button"
+              class="attendance-calendar__cell"
+              :class="cellClasses(cell)"
+              :disabled="cell.outside || !cell.info.hasData"
+              :title="
+                cell.info.hasData
+                  ? `${attendanceStatusLabel(cell.info.status)} · ${timeRangeLabel(cell.info)}`
+                  : undefined
+              "
+              :aria-label="
+                cell.info.hasData
+                  ? `Ngày ${cell.day}, ${attendanceStatusLabel(cell.info.status)}`
+                  : `Ngày ${cell.day}`
+              "
+              @click="onSelectDay(cell)"
+            >
+              <span class="attendance-calendar__day-number">
                 {{ String(cell.day).padStart(2, '0') }}
               </span>
-              <div class="flex items-center gap-1.5">
-                <span
-                  v-if="cell.info.hasData"
-                  class="h-2.5 w-2.5 rounded-full shadow-sm"
-                  :class="attendanceStatusDot(cell.info.status)"
-                />
-                <span
-                  v-if="cell.today"
-                  class="attendance-calendar__today-pill"
-                  :class="
-                    cell.info.hasData
-                      ? 'bg-white/80 text-slate-800'
-                      : 'bg-[#472f92]/10 text-[#472f92]'
-                  "
-                >
-                  Hôm nay
-                </span>
-              </div>
-            </div>
-
-            <div
-              v-if="!cell.outside && cell.info.hasData"
-              class="attendance-calendar__cell-body"
-            >
-              <p class="attendance-calendar__status-chip">
-                {{ attendanceStatusLabel(cell.info.status) }}
-              </p>
               <p
+                v-if="!cell.outside && cell.info.hasData"
                 class="attendance-calendar__time-range"
-                :class="cell.today ? 'text-slate-800' : 'text-slate-800'"
               >
-                {{ cell.info.checkIn }} - {{ cell.info.checkOut }}
+                {{ timeRangeLabel(cell.info) }}
               </p>
-              <p
-                v-if="cell.info.duration"
-                class="attendance-calendar__duration"
-                :class="cell.today ? 'text-slate-500' : 'text-slate-500'"
-              >
-                {{ cell.info.duration }}
-              </p>
-            </div>
-
-            <p
-              v-else-if="!cell.outside"
-              class="attendance-calendar__cell-empty"
-              :class="cell.today ? 'font-medium text-[#472f92]/75' : 'text-slate-300'"
-            >
-              {{ cell.today ? 'Chưa chấm công' : 'Chưa có dữ liệu' }}
-            </p>
-          </button>
+            </button>
+          </div>
         </div>
       </div>
-
-      <p class="mt-3 text-center text-[11px] text-slate-400">
-        Bấm vào ngày có dữ liệu để xem chi tiết.
-      </p>
-    </div>
-
-    <div v-if="!hasAttendance && !loading" class="lg:hidden">
-      <p class="text-center text-xs text-slate-400">
-        Dùng bộ chọn tháng phía trên để xem tháng khác
-      </p>
     </div>
   </div>
 </template>
 
 <style scoped>
 .attendance-calendar {
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
 
-.attendance-calendar__toolbar {
-  overflow: hidden;
-  border: 1px solid rgb(226 232 240 / 0.8);
-  border-radius: 1rem;
-  background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.98) 0%, rgb(248 250 252 / 0.98) 100%);
-  box-shadow:
-    0 10px 30px -24px rgb(15 23 42 / 0.28),
-    0 1px 2px rgb(15 23 42 / 0.04);
+.attendance-calendar__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1.25rem;
 }
 
-.attendance-calendar__toolbar > :first-child {
-  border-bottom: 1px solid rgb(226 232 240 / 0.75);
-}
-
-.attendance-calendar__nav {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  flex-shrink: 0;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.625rem;
-  background: #fff;
-  color: #64748b;
-  transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease,
-    transform 0.18s ease;
-}
-
-.attendance-calendar__nav:hover:not(:disabled) {
-  border-color: rgb(71 47 146 / 0.24);
-  background: #f8f7fd;
-  color: #472f92;
-  transform: translateY(-1px);
-}
-
-.attendance-calendar__nav:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.attendance-calendar__month {
+.attendance-calendar__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem 0.75rem;
   min-width: 0;
-  flex: 1;
-  text-align: center;
 }
 
-.attendance-calendar__month-title {
+.attendance-calendar__title {
+  margin: 0;
   font-size: 1rem;
   font-weight: 700;
-  color: #334155;
+  line-height: 1.25;
+  color: #0f172a;
 }
 
-.attendance-calendar__month-meta {
-  margin-top: 0.15rem;
-  font-size: 0.73rem;
+.attendance-calendar__meta {
+  margin: 0;
+  font-size: 0.8rem;
   color: #94a3b8;
 }
 
-.attendance-calendar__current-btn:deep(.p-button) {
-  border-color: #dbe2f0;
-  color: #475569;
-}
-
 .attendance-calendar__today {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem 1rem;
-  padding: 0.85rem 1rem;
-  background:
-    linear-gradient(180deg, rgb(248 250 252 / 0.9) 0%, rgb(255 255 255 / 0.95) 100%);
+  gap: 0.35rem 0.5rem;
+  min-width: 0;
 }
 
 .attendance-calendar__today-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.8rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 999px;
-  background: #fff;
-  font-size: 0.72rem;
+  gap: 0.35rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  color: #475569;
-  text-transform: uppercase;
   letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #c2410c;
 }
 
 .attendance-calendar__today-dot {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.45rem;
+  height: 0.45rem;
   border-radius: 999px;
 }
 
 .attendance-calendar__today-item {
-  font-size: 0.92rem;
-  color: #475569;
-  font-variant-numeric: tabular-nums;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.attendance-calendar__today-item .text-slate-400 {
+  margin-right: 0.2rem;
+  font-weight: 500;
+}
+
+.attendance-calendar__today-sep {
+  color: #cbd5e1;
 }
 
 .attendance-calendar__today-empty {
-  font-size: 0.92rem;
+  font-size: 0.84rem;
   color: #64748b;
+}
+
+.attendance-calendar__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.attendance-calendar__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1rem;
+}
+
+.attendance-calendar__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.attendance-calendar__legend-swatch {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 0.15rem;
+  flex-shrink: 0;
+}
+
+.attendance-calendar__legend-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.attendance-calendar__legend-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #334155;
+  font-variant-numeric: tabular-nums;
+}
+
+.attendance-calendar__empty {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 0;
+}
+
+.attendance-calendar__empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: 0.65rem;
+  background: #f8fafc;
+  color: #472f92;
+  border: 1px solid #e2e8f0;
 }
 
 .attendance-calendar__desktop {
   overflow: hidden;
-  border: 1px solid rgb(226 232 240 / 0.8);
-  border-radius: 1rem;
-  background: #f8fafc;
-  box-shadow:
-    0 10px 30px -24px rgb(15 23 42 / 0.3),
-    0 1px 2px rgb(15 23 42 / 0.05);
+  border: 1px solid #e2e8f0;
+  border-radius: 0.65rem;
+  background: #fff;
 }
 
 .attendance-calendar__weekday-row {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  border-bottom: 1px solid rgb(226 232 240 / 0.85);
-  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fafafa;
 }
 
 .attendance-calendar__weekday {
-  padding: 0.85rem 0.25rem;
+  padding: 0.55rem 0.2rem;
   text-align: center;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
+  color: #64748b;
+}
+
+.attendance-calendar__weekday.is-weekend-label {
+  color: #cbd5e1;
 }
 
 .attendance-calendar__grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 1px;
-  padding: 1px;
-  background: rgb(226 232 240 / 0.9);
+  background: #e2e8f0;
 }
 
 .attendance-calendar__cell {
   display: flex;
   flex-direction: column;
-  min-height: 7.15rem;
-  padding: 0.8rem 0.85rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  min-height: 5.5rem;
+  padding: 0.6rem 0.65rem;
   text-align: left;
-  color: #0f172a;
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    filter 0.18s ease;
+  background: #fff;
+  color: #334155;
+  transition: filter 0.15s ease;
 }
 
 .attendance-calendar__cell:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
-  filter: saturate(1.03);
+  filter: brightness(1.06);
+  z-index: 1;
 }
 
-.attendance-calendar__cell-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.5rem;
+.attendance-calendar__cell:disabled {
+  cursor: default;
+}
+
+.attendance-calendar__cell.is-outside {
+  background: #fff;
+  pointer-events: none;
+}
+
+.attendance-calendar__cell.is-outside .attendance-calendar__day-number {
+  color: #cbd5e1;
+}
+
+.attendance-calendar__cell.is-weekend {
+  background: #fafafa;
+}
+
+.attendance-calendar__cell.is-weekend .attendance-calendar__day-number {
+  color: #94a3b8;
+}
+
+.attendance-calendar__cell.is-empty .attendance-calendar__day-number {
+  color: #475569;
+}
+
+.attendance-calendar__cell.is-filled {
+  color: #fff;
+}
+
+.attendance-calendar__cell.is-filled .attendance-calendar__day-number,
+.attendance-calendar__cell.is-filled .attendance-calendar__time-range {
+  color: #fff;
+}
+
+.attendance-calendar__cell.is-success {
+  background: #472f92;
+}
+
+.attendance-calendar__cell.is-success:hover:not(:disabled) {
+  background: #3d2780;
+}
+
+.attendance-calendar__cell.is-warning {
+  background: #b45309;
+}
+
+.attendance-calendar__cell.is-warning:hover:not(:disabled) {
+  background: #9a3412;
+}
+
+.attendance-calendar__cell.is-danger {
+  background: #be123c;
+}
+
+.attendance-calendar__cell.is-danger:hover:not(:disabled) {
+  background: #9f1239;
+}
+
+.attendance-calendar__cell.is-today {
+  background: #ea580c;
+  color: #fff;
+}
+
+.attendance-calendar__cell.is-today .attendance-calendar__day-number,
+.attendance-calendar__cell.is-today .attendance-calendar__time-range {
+  color: #fff;
+}
+
+.attendance-calendar__cell.is-today:hover:not(:disabled) {
+  background: #c2410c;
+}
+
+.attendance-calendar__cell.is-today-empty {
+  background: #fff7ed;
+  box-shadow: inset 0 0 0 1.5px #fb923c;
+}
+
+.attendance-calendar__cell.is-today-empty .attendance-calendar__day-number {
+  color: #c2410c;
+  font-weight: 800;
 }
 
 .attendance-calendar__day-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.9rem;
-  padding: 0 0.25rem;
-  border-radius: 0.45rem;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 700;
   line-height: 1;
-}
-
-.attendance-calendar__today-pill {
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.62rem;
-  font-weight: 700;
-}
-
-.attendance-calendar__cell-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 0.3rem;
-  margin-top: 0.65rem;
-}
-
-.attendance-calendar__status-chip {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.78);
-  font-size: 0.64rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: #334155;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.75);
+  font-variant-numeric: tabular-nums;
 }
 
 .attendance-calendar__time-range {
-  font-size: 0.82rem;
-  line-height: 1.45;
+  font-size: 0.76rem;
+  line-height: 1.35;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+  word-break: break-word;
 }
 
-.attendance-calendar__duration {
-  margin-top: auto;
-  font-size: 0.68rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+.attendance-calendar__skeleton {
+  display: block;
+  border-radius: 0.3rem;
+  background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+  background-size: 200% 100%;
+  animation: attendance-skeleton-pulse 1.2s ease-in-out infinite;
 }
 
-.attendance-calendar__cell-empty {
-  margin-top: auto;
-  padding-top: 0.5rem;
-  font-size: 0.72rem;
-  line-height: 1.4;
+.attendance-calendar__skeleton--meta {
+  width: 6.5rem;
+  height: 0.7rem;
+}
+
+.attendance-calendar__skeleton--badge {
+  width: 4rem;
+  height: 0.85rem;
+  border-radius: 999px;
+}
+
+.attendance-calendar__skeleton--today-item {
+  width: 4.5rem;
+  height: 0.8rem;
+}
+
+.attendance-calendar__skeleton--legend {
+  width: 5rem;
+  height: 0.8rem;
+}
+
+.attendance-calendar__skeleton--avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+}
+
+.attendance-calendar__skeleton--line-sm {
+  width: 40%;
+  height: 0.65rem;
+}
+
+.attendance-calendar__skeleton--line-md {
+  width: 70%;
+  height: 0.8rem;
+}
+
+.attendance-calendar__cell--skeleton {
+  pointer-events: none;
+  cursor: default;
+}
+
+.attendance-calendar__skeleton--day {
+  width: 1.4rem;
+  height: 0.9rem;
+}
+
+.attendance-calendar__skeleton--day.is-muted {
+  opacity: 0.4;
+}
+
+.attendance-calendar__skeleton--time {
+  width: 78%;
+  height: 0.65rem;
+}
+
+@keyframes attendance-skeleton-pulse {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 @media (min-width: 1280px) {
   .attendance-calendar__cell {
-    min-height: 7.5rem;
+    min-height: 5.85rem;
+    padding: 0.7rem 0.75rem;
   }
 
   .attendance-calendar__time-range {
-    font-size: 0.86rem;
+    font-size: 0.82rem;
   }
 }
 </style>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Button from 'primevue/button'
-import ProgressBar from 'primevue/progressbar'
 import ChamCongCalendar from './components/ChamCongCalendar.vue'
 import ChamCongDetailDialog from './components/ChamCongDetailDialog.vue'
 import ChamCongHeroBanner from './components/ChamCongHeroBanner.vue'
@@ -101,33 +100,18 @@ function onCalendarModelUpdate(value: Date): void {
       </div>
     </div>
 
-    <section class="box overflow-hidden">
-      <div class="border-b border-slate-200/60 bg-slate-50/60 px-4 py-3.5 sm:px-5">
-        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 class="text-base font-semibold text-slate-900">Lịch chấm công</h2>
-            <p class="mt-1 text-sm text-slate-500">
-              Xem nhanh lịch làm việc và giờ vào/ra trong ngày.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <ProgressBar v-if="loading" mode="indeterminate" class="h-[2px]" />
-
-      <div class="p-3 sm:p-4">
-        <ChamCongCalendar
-          :model-value="selectedDate"
-          :loading="loading"
-          :has-attendance="hasAnyAttendance"
-          :status-counts="statusCounts"
-          :today-attendance="todayAttendance"
-          :get-day-cell-info="getDayCellInfo"
-          @update:model-value="onCalendarModelUpdate"
-          @month-change="handleCalendarMonthChange"
-          @date-select="handleSelectedDateChange"
-        />
-      </div>
+    <section class="box overflow-hidden p-4 sm:p-5">
+      <ChamCongCalendar
+        :model-value="selectedDate"
+        :loading="loading"
+        :has-attendance="hasAnyAttendance"
+        :status-counts="statusCounts"
+        :today-attendance="todayAttendance"
+        :get-day-cell-info="getDayCellInfo"
+        @update:model-value="onCalendarModelUpdate"
+        @month-change="handleCalendarMonthChange"
+        @date-select="handleSelectedDateChange"
+      />
     </section>
 
     <ChamCongDetailDialog v-model:visible="visible" :detail="detail" />

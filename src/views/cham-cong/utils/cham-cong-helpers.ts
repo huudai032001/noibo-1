@@ -27,10 +27,10 @@ export function attendanceStatusLabel(status: AttendanceStatus): string {
 
 export function attendanceStatusTone(status: AttendanceStatus): string {
   if (status === ATTENDANCE_STATUS.success) {
-    return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    return 'bg-[#472f92]/[0.08] text-[#472f92] border-[#472f92]/20'
   }
   if (status === ATTENDANCE_STATUS.warning) {
-    return 'bg-orange-50 text-orange-700 border-orange-200'
+    return 'bg-amber-50 text-amber-800 border-amber-200'
   }
   if (status === ATTENDANCE_STATUS.danger) {
     return 'bg-rose-50 text-rose-700 border-rose-200'
@@ -38,13 +38,13 @@ export function attendanceStatusTone(status: AttendanceStatus): string {
   return 'bg-slate-50 text-slate-500 border-slate-200'
 }
 
-/** Calendar day cell — left accent + soft fill, readable times */
+/** Mobile list row — left accent + soft fill */
 export function attendanceCellSurface(status: AttendanceStatus): string {
   if (status === ATTENDANCE_STATUS.success) {
-    return 'border border-emerald-200/80 border-l-[3px] border-l-emerald-500 bg-emerald-50 hover:bg-emerald-100/80'
+    return 'border border-[#472f92]/20 border-l-[3px] border-l-[#472f92] bg-[#472f92]/[0.04] hover:bg-[#472f92]/[0.08]'
   }
   if (status === ATTENDANCE_STATUS.warning) {
-    return 'border border-orange-200/80 border-l-[3px] border-l-orange-500 bg-orange-50 hover:bg-orange-100/80'
+    return 'border border-amber-200/80 border-l-[3px] border-l-amber-500 bg-amber-50 hover:bg-amber-100/80'
   }
   if (status === ATTENDANCE_STATUS.danger) {
     return 'border border-rose-200/80 border-l-[3px] border-l-rose-500 bg-rose-50 hover:bg-rose-100/80'
@@ -52,30 +52,41 @@ export function attendanceCellSurface(status: AttendanceStatus): string {
   return 'border border-slate-100 bg-slate-50/60'
 }
 
-/** Soft fill for dense calendar grid cells (gap-px layout) */
+/**
+ * Dense calendar grid — solid fills for fast scanning
+ * (brand purple = đúng giờ, amber = muộn, rose = thiếu giờ).
+ */
 export function attendanceGridCellSurface(status: AttendanceStatus): string {
   if (status === ATTENDANCE_STATUS.success) {
-    return 'border-l-[3px] border-l-emerald-500 bg-emerald-50 hover:bg-emerald-100/80'
+    return 'is-filled is-success'
   }
   if (status === ATTENDANCE_STATUS.warning) {
-    return 'border-l-[3px] border-l-orange-500 bg-orange-50 hover:bg-orange-100/80'
+    return 'is-filled is-warning'
   }
   if (status === ATTENDANCE_STATUS.danger) {
-    return 'border-l-[3px] border-l-rose-500 bg-rose-50 hover:bg-rose-100/80'
+    return 'is-filled is-danger'
   }
-  return 'bg-slate-50/70'
+  return ''
 }
 
 export function attendanceStatusDot(status: AttendanceStatus): string {
-  if (status === ATTENDANCE_STATUS.success) return 'bg-emerald-500'
-  if (status === ATTENDANCE_STATUS.warning) return 'bg-orange-500'
+  if (status === ATTENDANCE_STATUS.success) return 'bg-[#472f92]'
+  if (status === ATTENDANCE_STATUS.warning) return 'bg-amber-500'
   if (status === ATTENDANCE_STATUS.danger) return 'bg-rose-500'
   return 'bg-transparent'
 }
 
+/** Legend swatch matching solid calendar cells */
+export function attendanceLegendSwatch(status: AttendanceStatus): string {
+  if (status === ATTENDANCE_STATUS.success) return 'bg-[#472f92]'
+  if (status === ATTENDANCE_STATUS.warning) return 'bg-amber-600'
+  if (status === ATTENDANCE_STATUS.danger) return 'bg-rose-600'
+  return 'bg-slate-200'
+}
+
 export function attendanceStatusAccent(status: AttendanceStatus): string {
-  if (status === ATTENDANCE_STATUS.success) return 'text-emerald-700'
-  if (status === ATTENDANCE_STATUS.warning) return 'text-orange-700'
+  if (status === ATTENDANCE_STATUS.success) return 'text-[#472f92]'
+  if (status === ATTENDANCE_STATUS.warning) return 'text-amber-700'
   if (status === ATTENDANCE_STATUS.danger) return 'text-rose-700'
   return 'text-slate-500'
 }
