@@ -6,9 +6,9 @@ import { useFormatter } from '@/composables/use-formatter'
 import { ATTENDANCE_STATUS } from '../constants'
 import type { ChamCongDetailPayload } from '../models/cham-cong.model'
 import {
-  attendanceStatusDot,
+  attendanceStatusDotStyle,
   attendanceStatusLabel,
-  attendanceStatusTone,
+  attendanceStatusToneStyle,
   formatShortTime,
   formatWorkDuration,
 } from '../utils/cham-cong-helpers'
@@ -52,7 +52,8 @@ const hasDuration = computed(() => durationLabel.value !== '—')
 
 const status = computed(() => props.detail?.status ?? ATTENDANCE_STATUS.none)
 const statusLabel = computed(() => attendanceStatusLabel(status.value))
-const statusTone = computed(() => attendanceStatusTone(status.value))
+const badgeStyle = computed(() => attendanceStatusToneStyle(status.value))
+const dotStyle = computed(() => attendanceStatusDotStyle(status.value))
 const detailCards = computed(() => [
   {
     key: 'in',
@@ -95,59 +96,40 @@ function closeDialog(): void {
     :visible="visible"
     modal
     header="Chi tiết chấm công"
-    class="w-full max-w-lg"
+    class="cc-detail-dialog"
     :draggable="false"
     @update:visible="emit('update:visible', $event)"
   >
-    <div class="space-y-4">
-      <div
-        class="relative flex items-start justify-between gap-3 overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-br from-slate-50 to-white px-4 py-4"
-      >
-        <div
-          class="pointer-events-none absolute right-0 top-0 h-20 w-20 rounded-full bg-[#472f92]/10 blur-2xl"
-          aria-hidden="true"
-        />
-        <div class="min-w-0">
-          <p class="text-xs font-semibold uppercase tracking-[0.08em] text-slate-400">Ngày chấm công</p>
-          <p class="mt-1 text-lg font-semibold text-slate-900">{{ dateLabel }}</p>
-          <p v-if="weekdayLabel" class="mt-0.5 text-sm capitalize text-slate-500">
-            {{ weekdayLabel }}
-          </p>
+    <div class="cc-detail">
+      <div class="cc-detail__date-row">
+        <div class="cc-detail__date-info">
+          <p class="cc-detail__date-eyebrow">Ngày chấm công</p>
+          <p class="cc-detail__date-value">{{ dateLabel }}</p>
+          <p v-if="weekdayLabel" class="cc-detail__weekday">{{ weekdayLabel }}</p>
         </div>
-        <span
-          class="relative inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium shadow-sm"
-          :class="statusTone"
-        >
-          <span class="h-1.5 w-1.5 rounded-full" :class="attendanceStatusDot(status)" />
+        <span class="cc-detail__badge" :style="badgeStyle">
+          <span class="cc-detail__badge-dot" :style="dotStyle" />
           {{ statusLabel }}
         </span>
       </div>
 
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div class="cc-detail__cards">
         <div
           v-for="card in detailCards"
           :key="card.key"
-          class="rounded-2xl border border-slate-200/80 bg-white px-4 py-4 text-center shadow-sm shadow-slate-200/50"
+          class="cc-detail__card"
         >
-          <div
-            class="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-2xl bg-[#472f92]/10 text-[#472f92]"
-          >
-            <i :class="card.icon" class="text-sm" />
+          <div class="cc-detail__card-icon">
+            <i :class="card.icon" />
           </div>
-          <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">
-            {{ card.label }}
-          </p>
-          <p class="mt-2 text-2xl font-bold tabular-nums tracking-tight text-slate-900">
-            {{ card.value }}
-          </p>
+          <p class="cc-detail__card-label">{{ card.label }}</p>
+          <p class="cc-detail__card-value">{{ card.value }}</p>
         </div>
       </div>
 
-      <div class="rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3.5">
-        <p class="text-xs font-semibold uppercase tracking-[0.08em] text-slate-400">Ghi chú</p>
-        <p class="mt-1.5 text-sm leading-6 text-slate-600">
-          {{ noteLabel }}
-        </p>
+      <div v-if="noteLabel" class="cc-detail__note">
+        <p class="cc-detail__note-title">Ghi chú</p>
+        <p class="cc-detail__note-text">{{ noteLabel }}</p>
       </div>
     </div>
 
@@ -156,3 +138,209 @@ function closeDialog(): void {
     </template>
   </Dialog>
 </template>
+
+<style scoped>
+.cc-detail-dialog {
+  width: 100%;
+  max-width: 28rem;
+}
+
+@media (max-width: 480px) {
+  .cc-detail-dialog {
+    max-width: calc(100vw - 2rem);
+  }
+
+  .cc-detail-dialog :deep(.p-dialog-content) {
+    padding: 0.75rem;
+  }
+
+  .cc-detail-dialog :deep(.p-dialog-header) {
+    padding: 0.75rem;
+  }
+
+  .cc-detail-dialog :deep(.p-dialog-footer) {
+    padding: 0.75rem;
+  }
+}
+
+.cc-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .cc-detail {
+    gap: 0.75rem;
+  }
+}
+
+/* ── Date row ── */
+.cc-detail__date-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f8fafc, #fff);
+}
+
+@media (max-width: 480px) {
+  .cc-detail__date-row {
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+  }
+}
+
+.cc-detail__date-eyebrow {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.cc-detail__date-value {
+  margin: 0.25rem 0 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.cc-detail__weekday {
+  margin: 0.125rem 0 0;
+  font-size: 0.8125rem;
+  color: #64748b;
+  text-transform: capitalize;
+}
+
+.cc-detail__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3125rem 0.75rem;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cc-detail__badge-dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+/* ── Time cards ── */
+.cc-detail__cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.625rem;
+}
+
+@media (max-width: 480px) {
+  .cc-detail__cards {
+    gap: 0.5rem;
+  }
+
+  .cc-detail__card {
+    padding: 0.75rem 0.375rem;
+    border-radius: 10px;
+  }
+
+  .cc-detail__card-icon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.8125rem;
+  }
+
+  .cc-detail__card-value {
+    font-size: 1.125rem;
+  }
+}
+
+.cc-detail__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.cc-detail__card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.cc-detail__card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 10px;
+  background: #f0ecf9;
+  color: #472f92;
+  font-size: 0.875rem;
+}
+
+.cc-detail__card-label {
+  margin: 0.25rem 0 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.cc-detail__card-value {
+  margin: 0.125rem 0 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: #1e293b;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ── Note ── */
+.cc-detail__note {
+  padding: 0.875rem 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+@media (max-width: 480px) {
+  .cc-detail__note {
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+  }
+}
+
+.cc-detail__note-title {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.cc-detail__note-text {
+  margin: 0.375rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: #475569;
+}
+
+</style>

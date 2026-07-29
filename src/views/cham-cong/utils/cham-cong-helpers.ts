@@ -27,15 +27,15 @@ export function attendanceStatusLabel(status: AttendanceStatus): string {
 
 export function attendanceStatusTone(status: AttendanceStatus): string {
   if (status === ATTENDANCE_STATUS.success) {
-    return 'bg-[#472f92]/[0.08] text-[#472f92] border-[#472f92]/20'
+    return 'bg-emerald-50 text-emerald-700 border-emerald-300'
   }
   if (status === ATTENDANCE_STATUS.warning) {
-    return 'bg-amber-50 text-amber-800 border-amber-200'
+    return 'bg-amber-50 text-amber-700 border-amber-300'
   }
   if (status === ATTENDANCE_STATUS.danger) {
-    return 'bg-rose-50 text-rose-700 border-rose-200'
+    return 'bg-rose-50 text-rose-700 border-rose-300'
   }
-  return 'bg-slate-50 text-slate-500 border-slate-200'
+  return 'bg-slate-100 text-slate-500 border-slate-300'
 }
 
 /** Mobile list row — left accent + soft fill */
@@ -70,10 +70,30 @@ export function attendanceGridCellSurface(status: AttendanceStatus): string {
 }
 
 export function attendanceStatusDot(status: AttendanceStatus): string {
-  if (status === ATTENDANCE_STATUS.success) return 'bg-[#472f92]'
+  if (status === ATTENDANCE_STATUS.success) return 'bg-emerald-500'
   if (status === ATTENDANCE_STATUS.warning) return 'bg-amber-500'
   if (status === ATTENDANCE_STATUS.danger) return 'bg-rose-500'
-  return 'bg-transparent'
+  return 'bg-slate-400'
+}
+
+export function attendanceStatusToneStyle(status: AttendanceStatus): Record<string, string> {
+  if (status === ATTENDANCE_STATUS.success) {
+    return { background: '#ecfdf5', color: '#047857', borderColor: '#6ee7b7' }
+  }
+  if (status === ATTENDANCE_STATUS.warning) {
+    return { background: '#fffbeb', color: '#b45309', borderColor: '#fcd34d' }
+  }
+  if (status === ATTENDANCE_STATUS.danger) {
+    return { background: '#fff1f2', color: '#be123c', borderColor: '#fda4af' }
+  }
+  return { background: '#f1f5f9', color: '#64748b', borderColor: '#cbd5e1' }
+}
+
+export function attendanceStatusDotStyle(status: AttendanceStatus): Record<string, string> {
+  if (status === ATTENDANCE_STATUS.success) return { background: '#10b981' }
+  if (status === ATTENDANCE_STATUS.warning) return { background: '#f59e0b' }
+  if (status === ATTENDANCE_STATUS.danger) return { background: '#f43f5e' }
+  return { background: '#94a3b8' }
 }
 
 /** Legend swatch matching solid calendar cells */

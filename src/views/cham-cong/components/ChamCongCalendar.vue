@@ -501,7 +501,7 @@ function timeRangeLabel(info: DayCellInfo): string {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #c2410c;
+  color: #fdb913;
 }
 
 .attendance-calendar__today-dot {
@@ -700,7 +700,7 @@ function timeRangeLabel(info: DayCellInfo): string {
 }
 
 .attendance-calendar__cell.is-today {
-  background: #ea580c;
+  background: #fdb913;
   color: #fff;
 }
 
@@ -710,7 +710,7 @@ function timeRangeLabel(info: DayCellInfo): string {
 }
 
 .attendance-calendar__cell.is-today:hover:not(:disabled) {
-  background: #c2410c;
+  background: #fdb913;
 }
 
 .attendance-calendar__cell.is-today-empty {
@@ -822,4 +822,5 @@ function timeRangeLabel(info: DayCellInfo): string {
     font-size: 0.82rem;
   }
 }
+
 </style>

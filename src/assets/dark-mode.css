@@ -169,6 +169,317 @@ html.dark-mode .border-white {
   border-color: #334155;
 }
 
+/* ── Chấm công: Hero banner ── */
+html.dark-mode body .attendance-summary {
+  border-color: #334155;
+  background: #1e293b;
+}
+
+html.dark-mode body .attendance-summary__eyebrow {
+  color: #a78bfa;
+}
+
+html.dark-mode body .attendance-summary__dot {
+  color: #475569;
+}
+
+html.dark-mode body .attendance-summary__title {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .attendance-summary__employee {
+  color: #cbd5e1;
+}
+
+html.dark-mode body .attendance-summary__meta-label {
+  color: #94a3b8;
+}
+
+html.dark-mode body .attendance-summary__meta-value {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .attendance-summary__metrics {
+  border-top-color: #334155;
+}
+
+html.dark-mode body .attendance-metric {
+  border-color: #334155;
+  background: #172033;
+}
+
+html.dark-mode body .attendance-metric__label {
+  color: #94a3b8;
+}
+
+html.dark-mode body .attendance-metric__value {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .attendance-metric__unit {
+  color: #94a3b8;
+}
+
+html.dark-mode body .attendance-summary__loading {
+  background: #334155;
+}
+
+/* ── Chấm công: Calendar ── */
+html.dark-mode body .attendance-calendar__title {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .attendance-calendar__today-item {
+  color: #cbd5e1;
+}
+
+html.dark-mode body .attendance-calendar__today-sep {
+  color: #475569;
+}
+
+html.dark-mode body .attendance-calendar__today-empty {
+  color: #94a3b8;
+}
+
+html.dark-mode body .attendance-calendar__legend-label {
+  color: #94a3b8;
+}
+
+html.dark-mode body .attendance-calendar__legend-count {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .attendance-calendar__empty-icon {
+  background: #1e293b;
+  border-color: #334155;
+  color: #a78bfa;
+}
+
+html.dark-mode body .attendance-calendar__desktop {
+  border-color: #334155;
+  background: #1e293b;
+}
+
+html.dark-mode body .attendance-calendar__weekday-row {
+  border-bottom-color: #334155;
+  background: #172033;
+}
+
+html.dark-mode body .attendance-calendar__weekday {
+  color: #94a3b8;
+}
+
+html.dark-mode body .attendance-calendar__weekday.is-weekend-label {
+  color: #475569;
+}
+
+html.dark-mode body .attendance-calendar__grid {
+  background: #334155;
+}
+
+html.dark-mode body .attendance-calendar__cell {
+  background: #1e293b;
+  color: #cbd5e1;
+}
+
+html.dark-mode body .attendance-calendar__cell.is-outside {
+  background: #172033;
+}
+
+html.dark-mode body .attendance-calendar__cell.is-outside .attendance-calendar__day-number {
+  color: #475569;
+}
+
+html.dark-mode body .attendance-calendar__cell.is-weekend {
+  background: #172033;
+}
+
+html.dark-mode body .attendance-calendar__cell.is-weekend .attendance-calendar__day-number {
+  color: #64748b;
+}
+
+html.dark-mode body .attendance-calendar__cell.is-empty .attendance-calendar__day-number {
+  color: #94a3b8;
+}
+
+html.dark-mode body .attendance-calendar__cell.is-today-empty {
+  background: #2d1f0e;
+  box-shadow: inset 0 0 0 1.5px #d97706;
+}
+
+html.dark-mode body .attendance-calendar__cell.is-today-empty .attendance-calendar__day-number {
+  color: #fbbf24;
+}
+
+html.dark-mode body .attendance-calendar__skeleton {
+  background: linear-gradient(90deg, #334155 0%, #475569 50%, #334155 100%);
+  background-size: 200% 100%;
+}
+
+/* Calendar mobile list */
+html.dark-mode body .attendance-calendar .rounded-xl {
+  border-color: #334155;
+  background: #1e293b;
+}
+
+html.dark-mode body .attendance-calendar .bg-white {
+  background-color: #0f172a;
+}
+
+html.dark-mode body .attendance-calendar .text-slate-800 {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .attendance-calendar .text-slate-400 {
+  color: #64748b;
+}
+
+html.dark-mode body .attendance-calendar .bg-slate-100 {
+  background-color: #334155;
+}
+
+html.dark-mode body .attendance-calendar .text-slate-600 {
+  color: #cbd5e1;
+}
+
+html.dark-mode body .attendance-calendar .w-px.bg-slate-200 {
+  background-color: #475569;
+}
+
+html.dark-mode body .attendance-calendar .pi-chevron-right.text-slate-300 {
+  color: #64748b;
+}
+
+/* ── Chấm công: Detail dialog ── */
+html.dark-mode body .cc-detail__date-row {
+  border-color: #334155;
+  background: linear-gradient(135deg, #1e293b, #172033);
+}
+
+html.dark-mode body .cc-detail__date-value {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .cc-detail__weekday {
+  color: #94a3b8;
+}
+
+html.dark-mode body .cc-detail__card {
+  border-color: #334155;
+  background: #1e293b;
+}
+
+html.dark-mode body .cc-detail__card:hover {
+  border-color: #475569;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+html.dark-mode body .cc-detail__card-icon {
+  background: #2d2259;
+  color: #a78bfa;
+}
+
+html.dark-mode body .cc-detail__card-value {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .cc-detail__note {
+  border-color: #334155;
+  background: #172033;
+}
+
+html.dark-mode body .cc-detail__note-text {
+  color: #94a3b8;
+}
+
+/* ── Chấm công: Month picker ── */
+html.dark-mode body .month-picker__bar {
+  border-color: #334155;
+  background: #1e293b;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+}
+
+html.dark-mode body .month-picker__nav {
+  background: #172033;
+  color: #94a3b8;
+}
+
+html.dark-mode body .month-picker__nav:hover:not(:disabled) {
+  background: #334155;
+  color: #a78bfa;
+}
+
+html.dark-mode body .month-picker__trigger {
+  border-left-color: #334155;
+  border-right-color: #334155;
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+html.dark-mode body .month-picker__trigger:hover:not(:disabled) {
+  background: #263354;
+}
+
+html.dark-mode body .month-picker__trigger.is-open {
+  background: rgb(167 139 250 / 0.1);
+  color: #a78bfa;
+}
+
+html.dark-mode body .month-picker__trigger-icon {
+  color: #a78bfa;
+}
+
+html.dark-mode body .month-picker__trigger-caret {
+  color: #94a3b8;
+}
+
+html.dark-mode body .month-picker__trigger.is-open .month-picker__trigger-caret {
+  color: #a78bfa;
+}
+
+html.dark-mode body .month-picker__panel {
+  border-color: #334155;
+  background: #1e293b;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.3),
+    0 4px 6px -4px rgb(0 0 0 / 0.2);
+}
+
+html.dark-mode body .month-picker__panel-header {
+  border-bottom-color: #334155;
+}
+
+html.dark-mode body .month-picker__year {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .month-picker__year-nav {
+  border-color: #334155;
+  background: #172033;
+  color: #94a3b8;
+}
+
+html.dark-mode body .month-picker__year-nav:hover:not(:disabled) {
+  border-color: rgb(167 139 250 / 0.35);
+  color: #a78bfa;
+}
+
+html.dark-mode body .month-picker__month {
+  background: #172033;
+  color: #e2e8f0;
+}
+
+html.dark-mode body .month-picker__month:hover:not(:disabled):not(.is-selected) {
+  background: #334155;
+  border-color: #475569;
+}
+
+html.dark-mode body .month-picker__month.is-selected {
+  border-color: #a78bfa;
+  background: rgb(167 139 250 / 0.12);
+  color: #a78bfa;
+}
+
 /* Payslip page tokens */
 html.dark-mode .payslip-page {
   --pl-border: #334155;
