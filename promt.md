@@ -1,5 +1,5 @@
-1. Tại router cham-cong nếu chưa có thì tạo mới
-2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/human-resource/cham-cong-nhan-su.vue toàn
+1. Tại router propose nếu chưa có thì tạo mới
+2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/propose/ListProposeApplication.vue toàn
    bộ composables/components/models/apis liên quan
 3. Refactor toàn bộ logic sang composables 
 

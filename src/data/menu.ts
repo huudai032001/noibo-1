@@ -488,4 +488,14 @@ export const breadcrumbs = {
     { label: 'Hành chính' },
     { label: 'Phiếu lương', active: true },
   ],
+  '/propose': [
+    { label: 'Application', to: '/' },
+    { label: 'Hành chính' },
+    { label: 'Đề xuất', active: true },
+  ],
+  '/propose/decided/teamLead-BOD': [
+    { label: 'Application', to: '/' },
+    { label: 'Hành chính' },
+    { label: 'Duyệt đề xuất', active: true },
+  ],
 }

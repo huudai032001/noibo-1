@@ -43,6 +43,18 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Chấm công' },
       },
       {
+        path: 'propose',
+        name: 'list-propose-application',
+        component: () => import('../views/propose/ProposeApplication.vue'),
+        meta: { title: 'Đề xuất' },
+      },
+      {
+        path: 'propose/decided/teamLead-BOD',
+        name: 'list-propose-lead-bod',
+        component: () => import('../views/propose/ProposeApproval.vue'),
+        meta: { title: 'Duyệt đề xuất' },
+      },
+      {
         path: 'inbox',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Hộp thư' },
