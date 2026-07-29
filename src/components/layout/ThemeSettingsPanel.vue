@@ -58,6 +58,32 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocumentClick))
     <Transition name="theme-panel">
       <div v-if="panelOpen" class="theme-settings__panel" role="dialog" aria-label="Tuỳ chỉnh giao diện">
         <div class="theme-settings__section">
+          <p class="theme-settings__label">Chế độ hiển thị</p>
+          <div class="theme-settings__mode-toggle">
+            <button
+              type="button"
+              class="theme-settings__mode-btn"
+              :class="{ 'is-active': !themeStore.isDark }"
+              @click="themeStore.setMode('light')"
+            >
+              <i class="pi pi-sun" />
+              <span>Sáng</span>
+            </button>
+            <button
+              type="button"
+              class="theme-settings__mode-btn"
+              :class="{ 'is-active': themeStore.isDark }"
+              @click="themeStore.setMode('dark')"
+            >
+              <i class="pi pi-moon" />
+              <span>Tối</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="theme-settings__divider" />
+
+        <div class="theme-settings__section">
           <p class="theme-settings__label">Màu chủ đạo</p>
           <div class="theme-settings__colors">
             <button
@@ -351,6 +377,43 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocumentClick))
   opacity: 0.9;
 }
 
+.theme-settings__mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.theme-settings__mode-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.theme-settings__mode-btn:hover:not(.is-active) {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.theme-settings__mode-btn.is-active {
+  background: var(--app-primary-light, rgba(71, 47, 146, 0.08));
+  border-color: var(--app-primary, #472f92);
+  color: var(--app-primary, #472f92);
+}
+
+.theme-settings__mode-btn i {
+  font-size: 1rem;
+}
+
 .theme-panel-enter-active,
 .theme-panel-leave-active {
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -360,5 +423,87 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocumentClick))
 .theme-panel-leave-to {
   opacity: 0;
   transform: translateY(-8px) scale(0.97);
+}
+
+
+</style>
+
+<style>
+html.dark-mode .theme-settings__panel {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.3) !important;
+}
+
+html.dark-mode .theme-settings__label {
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .theme-settings__divider {
+  background: #334155 !important;
+}
+
+html.dark-mode .theme-settings__color-swatch.is-active {
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 0 0 2px #1e293b, 0 0 0 4px currentColor !important;
+}
+
+html.dark-mode .theme-settings__custom-label {
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .theme-settings__color-input {
+  border-color: #475569 !important;
+}
+
+html.dark-mode .theme-settings__mode-btn {
+  border-color: #475569 !important;
+  background: #0f172a !important;
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .theme-settings__mode-btn:hover:not(.is-active) {
+  background: #334155 !important;
+  border-color: #64748b !important;
+}
+
+html.dark-mode .theme-settings__mode-btn.is-active {
+  background: rgba(var(--app-primary-dark-soft-rgb, 107, 91, 158), 0.15) !important;
+  border-color: var(--app-primary-dark-soft, #6b5b9e) !important;
+  color: var(--app-primary-dark-soft, #6b5b9e) !important;
+}
+
+html.dark-mode .theme-settings__bg-thumb {
+  background-color: #334155 !important;
+}
+
+html.dark-mode .theme-settings__bg-thumb--none {
+  color: #64748b !important;
+}
+
+html.dark-mode .theme-settings__bg-name {
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .theme-settings__bg-item.is-active {
+  border-color: var(--app-primary-dark-soft, #6b5b9e) !important;
+}
+
+html.dark-mode .theme-settings__url-input {
+  border-color: #475569 !important;
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark-mode .theme-settings__url-input::placeholder {
+  color: #64748b !important;
+}
+
+html.dark-mode .theme-settings__url-input:focus {
+  border-color: var(--app-primary-dark-soft, #6b5b9e) !important;
+}
+
+html.dark-mode .theme-settings__url-btn {
+  background: var(--app-primary-dark-soft, #6b5b9e) !important;
 }
 </style>

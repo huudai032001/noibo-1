@@ -1,9 +1,6 @@
 /* Dark mode overrides for Midone template + app surfaces */
 
-html.dark-mode {
-  /* Header chrome (top bar + top menu) — slightly lighter than content */
-  background: #1a3266;
-}
+/* html.dark-mode background is handled by base.css via --app-primary-dark */
 
 html.dark-mode body {
   color: #e2e8f0;

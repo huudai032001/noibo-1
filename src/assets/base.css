@@ -7,6 +7,120 @@
   --app-primary-lighter: rgba(71, 47, 146, 0.04);
 }
 
+/* Header shell uses primary color */
+html {
+  background-color: var(--app-primary, #472f92) !important;
+}
+
+.bg-theme-1 {
+  background-color: var(--app-primary, #472f92) !important;
+}
+
+.hover\:bg-theme-1:hover {
+  background-color: var(--app-primary, #472f92) !important;
+}
+
+.border-theme-1 {
+  border-color: var(--app-primary, #472f92) !important;
+}
+
+.text-theme-1 {
+  color: var(--app-primary, #472f92) !important;
+}
+
+.bg-theme-38 {
+  background-color: var(--app-primary-hover, #3d2780) !important;
+}
+
+/* ── Dark mode: swap to dark-safe variants ── */
+html.dark-mode {
+  background-color: var(--app-primary-dark, #1e1554) !important;
+}
+
+html.dark-mode .bg-theme-1 {
+  background-color: var(--app-primary-dark, #1e1554) !important;
+}
+
+html.dark-mode .hover\:bg-theme-1:hover {
+  background-color: var(--app-primary-dark, #1e1554) !important;
+}
+
+html.dark-mode .border-theme-1 {
+  border-color: var(--app-primary-dark, #1e1554) !important;
+}
+
+html.dark-mode .text-theme-1 {
+  color: var(--app-primary-dark-soft, #6b5b9e) !important;
+}
+
+html.dark-mode .bg-theme-38 {
+  background-color: var(--app-primary-dark-hover, #1a1249) !important;
+}
+
+html.dark-mode .cc-bg-primary {
+  background-color: var(--app-primary-dark, #1e1554);
+}
+
+html.dark-mode .cc-text-primary {
+  color: var(--app-primary-dark-soft, #6b5b9e);
+}
+
+html.dark-mode .cc-swatch-primary {
+  background-color: var(--app-primary-dark, #1e1554);
+}
+
+html.dark-mode .cc-bg-primary-light {
+  background: rgba(var(--app-primary-dark-soft-rgb, 107, 91, 158), 0.12);
+}
+
+html.dark-mode .cc-success-surface {
+  border-color: rgba(var(--app-primary-dark-soft-rgb, 107, 91, 158), 0.25);
+  border-left-color: var(--app-primary-dark-soft, #6b5b9e);
+  background: rgba(var(--app-primary-dark-soft-rgb, 107, 91, 158), 0.06);
+}
+
+html.dark-mode .cc-success-surface:hover {
+  background: rgba(var(--app-primary-dark-soft-rgb, 107, 91, 158), 0.12);
+}
+
+/* Calendar cells dark mode */
+html.dark-mode .attendance-calendar__cell.is-success {
+  background: var(--app-primary-dark, #1e1554);
+}
+
+html.dark-mode .attendance-calendar__cell.is-success:hover:not(:disabled) {
+  background: var(--app-primary-dark-hover, #1a1249);
+}
+
+/* ChamCong components dark mode */
+html.dark-mode .attendance-calendar__empty-icon {
+  color: var(--app-primary-dark-soft, #6b5b9e);
+}
+
+html.dark-mode .cc-detail__card-icon {
+  background: rgba(var(--app-primary-dark-soft-rgb, 107, 91, 158), 0.15);
+  color: var(--app-primary-dark-soft, #6b5b9e);
+}
+
+html.dark-mode .attendance-summary__eyebrow {
+  color: var(--app-primary-dark-soft, #6b5b9e);
+}
+
+html.dark-mode .month-picker__trigger.is-open {
+  background: rgba(var(--app-primary-dark-soft-rgb, 107, 91, 158), 0.12);
+  color: var(--app-primary-dark-soft, #6b5b9e);
+}
+
+html.dark-mode .month-picker__trigger-icon {
+  color: var(--app-primary-dark-soft, #6b5b9e);
+}
+
+html.dark-mode .month-picker__month.is-selected {
+  border-color: var(--app-primary-dark-soft, #6b5b9e);
+  background: rgba(var(--app-primary-dark-soft-rgb, 107, 91, 158), 0.12);
+  color: var(--app-primary-dark-soft, #6b5b9e);
+}
+
 /* Vue mount root — Midone HTML gắn class vào body, không có #app */
 #app {
   min-height: 100%;
@@ -42,21 +156,6 @@
 
 .cc-border-primary {
   border-color: var(--app-primary, #472f92);
-}
-
-/* Background image overlay */
-html.has-bg-image body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-image: var(--app-bg-image);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  opacity: 0.12;
-  pointer-events: none;
 }
 
 body.login #app {

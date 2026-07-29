@@ -45,13 +45,64 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   }
 }
 
+const clamp = (v: number) => Math.max(0, Math.min(255, Math.round(v)))
+
 function adjustBrightness(hex: string, factor: number): string {
   const rgb = hexToRgb(hex)
   if (!rgb) return hex
-  const clamp = (v: number) => Math.max(0, Math.min(255, Math.round(v)))
   const r = clamp(rgb.r * factor)
   const g = clamp(rgb.g * factor)
   const b = clamp(rgb.b * factor)
+  return `#${[r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('')}`
+}
+
+function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+  r /= 255; g /= 255; b /= 255
+  const max = Math.max(r, g, b), min = Math.min(r, g, b)
+  const l = (max + min) / 2
+  if (max === min) return [0, 0, l]
+  const d = max - min
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+  let h = 0
+  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6
+  else if (max === g) h = ((b - r) / d + 2) / 6
+  else h = ((r - g) / d + 4) / 6
+  return [h, s, l]
+}
+
+function hslToRgb(h: number, s: number, l: number): [number, number, number] {
+  if (s === 0) { const v = clamp(l * 255); return [v, v, v] }
+  const hue2rgb = (p: number, q: number, t: number) => {
+    if (t < 0) t += 1; if (t > 1) t -= 1
+    if (t < 1 / 6) return p + (q - p) * 6 * t
+    if (t < 1 / 2) return q
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6
+    return p
+  }
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+  const p = 2 * l - q
+  return [
+    clamp(hue2rgb(p, q, h + 1 / 3) * 255),
+    clamp(hue2rgb(p, q, h) * 255),
+    clamp(hue2rgb(p, q, h - 1 / 3) * 255),
+  ]
+}
+
+function makeDarkVariant(hex: string): string {
+  const rgb = hexToRgb(hex)
+  if (!rgb) return hex
+  const [h, s, l] = rgbToHsl(rgb.r, rgb.g, rgb.b)
+  const darkL = Math.min(l, 0.35)
+  const darkS = Math.min(s, 0.6)
+  const [r, g, b] = hslToRgb(h, darkS, darkL)
+  return `#${[r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('')}`
+}
+
+function makeDarkSoftVariant(hex: string): string {
+  const rgb = hexToRgb(hex)
+  if (!rgb) return hex
+  const [h, s] = rgbToHsl(rgb.r, rgb.g, rgb.b)
+  const [r, g, b] = hslToRgb(h, Math.min(s, 0.5), 0.55)
   return `#${[r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('')}`
 }
 
@@ -61,11 +112,23 @@ export function applyPrimaryColor(color: string): void {
   const rgb = hexToRgb(color)
   if (!rgb) return
 
+  const darkColor = makeDarkVariant(color)
+  const darkRgb = hexToRgb(darkColor)!
+  const darkSoft = makeDarkSoftVariant(color)
+  const darkSoftRgb = hexToRgb(darkSoft)!
+
   root.style.setProperty('--app-primary', color)
   root.style.setProperty('--app-primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`)
   root.style.setProperty('--app-primary-hover', adjustBrightness(color, 0.85))
   root.style.setProperty('--app-primary-light', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08)`)
   root.style.setProperty('--app-primary-lighter', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.04)`)
+
+  root.style.setProperty('--app-primary-dark', darkColor)
+  root.style.setProperty('--app-primary-dark-rgb', `${darkRgb.r}, ${darkRgb.g}, ${darkRgb.b}`)
+  root.style.setProperty('--app-primary-dark-hover', adjustBrightness(darkColor, 0.85))
+  root.style.setProperty('--app-primary-dark-soft', darkSoft)
+  root.style.setProperty('--app-primary-dark-soft-rgb', `${darkSoftRgb.r}, ${darkSoftRgb.g}, ${darkSoftRgb.b}`)
+  root.style.setProperty('--app-primary-dark-light', `rgba(${darkSoftRgb.r}, ${darkSoftRgb.g}, ${darkSoftRgb.b}, 0.12)`)
 }
 
 export function readStoredPrimaryColor(): string {

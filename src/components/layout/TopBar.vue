@@ -19,9 +19,12 @@ import DarkModeToggle from './DarkModeToggle.vue'
 import ThemeSettingsPanel from './ThemeSettingsPanel.vue'
 import logoEdutalk from '@/assets/logo_edutalk.svg'
 import { useAuthStore } from '@/stores/auth'
+import { useThemeStore } from '@/stores/theme'
 
 const authStore = useAuthStore()
+const themeStore = useThemeStore()
 const { currentUser } = storeToRefs(authStore)
+const { bgImageUrl, isDark } = storeToRefs(themeStore)
 
 const avatarLoadFailed = ref(false)
 
@@ -45,6 +48,21 @@ const userSubtitle = computed(() => {
   if (accountTypeName) return accountTypeName
 
   return user.email?.trim() || ''
+})
+
+const headerStyle = computed(() => {
+  if (!bgImageUrl.value) return undefined
+
+  const overlay = isDark.value
+    ? 'linear-gradient(rgba(var(--app-primary-dark-rgb, 30, 21, 84), 0.30), rgba(var(--app-primary-dark-rgb, 30, 21, 84), 0.32))'
+    : 'linear-gradient(rgba(var(--app-primary-rgb, 71, 47, 146), 0.30), rgba(var(--app-primary-rgb, 71, 47, 146), 0.32))'
+
+  return {
+    backgroundImage: `${overlay}, url("${bgImageUrl.value}")`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+  }
 })
 
 defineProps({
@@ -72,7 +90,10 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 
 <template>
   <!-- BEGIN: Top Bar -->
-  <div class="layout-header border-b border-theme-24 -mt-10 md:-mt-5 -mx-3 sm:-mx-8 px-3 sm:px-8 pt-3 md:pt-0 mb-2">
+  <div
+    class="layout-header border-b border-theme-24 -mt-10 md:-mt-5 -mx-3 sm:-mx-8 px-3 sm:px-8 pt-3 md:pt-0 mb-2"
+    :style="headerStyle"
+  >
     <div class="top-bar-boxed flex items-center">
       <!-- BEGIN: Logo -->
       <RouterLink to="/" class="-intro-x hidden md:flex items-center">
