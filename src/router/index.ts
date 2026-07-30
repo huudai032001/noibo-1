@@ -55,6 +55,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Duyệt đề xuất' },
       },
       {
+        path: 'job-kpi/staff',
+        name: 'job-kpi-staff',
+        component: () => import('../views/job-kpi/staff/JobKpiStaff.vue'),
+        meta: { title: 'KPI công việc' },
+      },
+      {
         path: 'inbox',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Hộp thư' },

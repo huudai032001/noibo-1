@@ -568,3 +568,24 @@ html.dark-mode body .propose-detail__fieldset .p-fieldset-legend {
   border: none;
   color: #e2e8f0;
 }
+
+/* ── Job KPI staff: Detail dialog ── */
+html.dark-mode body .job-kpi-detail__input.p-inputtext,
+html.dark-mode body .job-kpi-detail__input.p-textarea,
+html.dark-mode body .job-kpi-detail__input .p-inputtext,
+html.dark-mode body .job-kpi-detail__input .p-textarea {
+  color: #e2e8f0;
+  background: #0f172a;
+  border-color: #334155;
+}
+
+html.dark-mode body .job-kpi-detail__result {
+  color: #e2e8f0;
+  background: #0f172a;
+  border-color: #334155;
+}
+
+html.dark-mode body .job-kpi-detail__block {
+  background: #1e293b;
+  border-color: #334155;
+}
