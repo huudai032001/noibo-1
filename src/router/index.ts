@@ -67,6 +67,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Chấm KPI và họp tuần' },
       },
       {
+        path: 'manage-okrs',
+        name: 'ManageOkrs',
+        component: () => import('../views/manage-okrs/ManageOkrs.vue'),
+        meta: { title: 'Quản lý OKRs' },
+      },
+      {
         path: 'inbox',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Hộp thư' },

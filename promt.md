@@ -1,5 +1,5 @@
-1. Tại router job-kpi/teamlead nếu chưa có thì tạo mới
-2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/job-kpi/TeamLead/JobKpiTeamlead.vue toàn
+1. Tại router manage-okrs nếu chưa có thì tạo mới
+2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/manage-okrs/ManageOkrs.vue toàn
    bộ composables/components/models/apis liên quan
 3. Refactor toàn bộ logic sang composables 
 
@@ -43,3 +43,5 @@
 14 Hãy sử dụng tailwind để css và primeVue để làm toàn bộ component tuyệt đối không dùng manual css nếu có thì phải hỏi trước
 15. Nội dung nếu có thì dùng tiếng việt nhé
 16. Thêm darkmode 
+17. tôi muốn không có button tìm kiếm khi chọn ở filter sẽ show lên url
+18 Dùng skeleton để loading
