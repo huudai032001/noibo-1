@@ -11,11 +11,15 @@ import type {
 } from '../models/job-kpi-teamlead.model'
 import { formatScoreOrEmpty } from '../utils/job-kpi-teamlead-helpers'
 
-const props = defineProps<{
-  detail: JobKpiDetailData
-  disabled: boolean
-  meetingFillSuggest: JobKpiMeetingFillSuggestState
-}>()
+const props = withDefaults(
+  defineProps<{
+    detail: JobKpiDetailData
+    disabled: boolean
+    meetingFillSuggest: JobKpiMeetingFillSuggestState
+    compactHeader?: boolean
+  }>(),
+  { compactHeader: false },
+)
 
 const emit = defineEmits<{
   'change-score': [row: JobKpiWeekMeetingRow, weekNumber: number, score: number | null]
@@ -26,9 +30,8 @@ const emit = defineEmits<{
 
 const weekCount = computed(() => props.detail.weekCount)
 
-function scoreLabel(score: number | null): string {
-  if (score === JOB_KPI_MEETING_SCORE.pass) return 'Đạt'
-  return 'Không đạt'
+function isPass(score: number | null): boolean {
+  return score === JOB_KPI_MEETING_SCORE.pass
 }
 
 function isSuggestFor(row: JobKpiWeekMeetingRow, weekNumber: number): boolean {
@@ -50,28 +53,47 @@ function onToggle(row: JobKpiWeekMeetingRow, weekNumber: number, checked: boolea
 </script>
 
 <template>
-  <section v-if="detail.weekMeetings.length > 0" class="mt-4 space-y-3">
-    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">
-        II. Kết quả họp tuần
-      </h3>
+  <section v-if="detail.weekMeetings.length > 0" class="space-y-3">
+    <div
+      v-if="!compactHeader"
+      class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div>
+        <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">
+          II. Kết quả họp tuần
+        </h3>
+        <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+          Bật = Đạt · Tắt = Không đạt
+        </p>
+      </div>
       <div
-        class="inline-flex items-center gap-2 rounded-xl bg-[rgba(var(--app-primary-rgb),0.08)] px-3 py-2 text-xs font-semibold text-[var(--app-primary)] dark:bg-[rgba(var(--app-primary-rgb),0.18)]"
+        class="inline-flex items-center gap-2 rounded-full bg-[rgba(var(--app-primary-rgb),0.1)] px-3.5 py-1.5 text-sm font-semibold tabular-nums text-[var(--app-primary)] dark:bg-[rgba(var(--app-primary-rgb),0.2)]"
       >
-        <i class="pi pi-users text-sm" />
-        Điểm tích họp tuần: {{ formatScoreOrEmpty(detail.totalScoreMeeting) }}
+        <i class="pi pi-users text-xs" />
+        Điểm họp tuần
+        <span class="text-base">{{ formatScoreOrEmpty(detail.totalScoreMeeting) }}</span>
       </div>
     </div>
 
-    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
-      <table class="w-full min-w-[720px] border-collapse text-left text-sm">
+    <p v-else class="text-xs text-slate-500 dark:text-slate-400">
+      Bật = Đạt · Tắt = Không đạt. Có thể tự động điền khi chấm ô đầu tiên.
+    </p>
+
+    <div
+      class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900"
+    >
+      <table class="w-full min-w-[640px] border-collapse text-left text-sm">
         <thead>
           <tr class="bg-[var(--app-primary)] text-white">
-            <th class="min-w-[280px] px-4 py-3 font-semibold">Tiêu chí</th>
+            <th
+              class="sticky left-0 z-10 min-w-[260px] bg-[var(--app-primary)] px-4 py-3 text-xs font-semibold tracking-wide"
+            >
+              Tiêu chí
+            </th>
             <th
               v-for="weekIndex in weekCount"
               :key="weekIndex"
-              class="min-w-[120px] px-4 py-3 text-center font-semibold"
+              class="min-w-[110px] px-3 py-3 text-center text-xs font-semibold"
             >
               Tuần {{ weekIndex }}
             </th>
@@ -79,62 +101,108 @@ function onToggle(row: JobKpiWeekMeetingRow, weekNumber: number, checked: boolea
         </thead>
         <tbody>
           <tr
-            v-for="row in detail.weekMeetings"
+            v-for="(row, rowIndex) in detail.weekMeetings"
             :key="row.criteriaId ?? row.id ?? row.criteriaName"
-            class="border-b border-slate-100 dark:border-slate-700/80"
+            class="border-b border-slate-100 transition-colors hover:bg-[rgba(var(--app-primary-rgb),0.03)] dark:border-slate-700/70 dark:hover:bg-[rgba(var(--app-primary-rgb),0.08)]"
+            :class="
+              rowIndex % 2 === 0
+                ? 'bg-white dark:bg-slate-900'
+                : 'bg-slate-50/70 dark:bg-slate-800/40'
+            "
           >
-            <td class="px-4 py-3.5 leading-6 text-slate-700 dark:text-slate-200">
+            <td
+              class="sticky left-0 z-10 px-4 py-3.5 text-xs leading-5 text-slate-700 shadow-[2px_0_6px_-2px_rgba(0,0,0,0.08)] dark:text-slate-200"
+              :class="
+                rowIndex % 2 === 0
+                  ? 'bg-white dark:bg-slate-900'
+                  : 'bg-slate-50 dark:bg-slate-800'
+              "
+            >
               {{ row.criteriaName }}
             </td>
             <td
               v-for="week in row.weeks"
               :key="`${row.criteriaId}-${week.weekNumber}`"
-              class="relative px-4 py-3.5 text-center"
+              class="relative px-3 py-3.5 text-center"
+              :class="isSuggestFor(row, week.weekNumber) ? 'z-30' : ''"
             >
-              <div class="inline-flex flex-col items-center gap-1">
+              <div
+                class="inline-flex flex-col items-center gap-1.5 rounded-lg px-1 py-0.5 transition-shadow"
+                :class="
+                  isSuggestFor(row, week.weekNumber)
+                    ? 'ring-2 ring-[var(--app-primary)] ring-offset-1 dark:ring-offset-slate-900'
+                    : ''
+                "
+              >
                 <ToggleSwitch
-                  :model-value="week.score === JOB_KPI_MEETING_SCORE.pass"
+                  :model-value="isPass(week.score)"
                   :disabled="disabled"
                   @update:model-value="onToggle(row, week.weekNumber, Boolean($event))"
                 />
                 <span
-                  class="text-xs font-medium"
+                  class="rounded-full px-2 py-0.5 text-[11px] font-semibold"
                   :class="
-                    week.score === JOB_KPI_MEETING_SCORE.pass
-                      ? 'text-emerald-600 dark:text-emerald-400'
-                      : 'text-red-600 dark:text-red-400'
+                    isPass(week.score)
+                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
+                      : 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300'
                   "
                 >
-                  {{ scoreLabel(week.score) }}
+                  {{ isPass(week.score) ? 'Đạt' : 'Không đạt' }}
                 </span>
               </div>
 
               <div
                 v-if="isSuggestFor(row, week.weekNumber)"
-                class="absolute left-1/2 top-14 z-20 w-72 -translate-x-1/2 rounded-xl border border-slate-200 bg-white p-3 text-left shadow-xl dark:border-slate-700 dark:bg-slate-800"
+                class="absolute left-1/2 top-[calc(100%-0.15rem)] z-40 w-[13.5rem] -translate-x-1/2 pt-2 text-left"
+                role="dialog"
+                aria-label="Tự động điền"
               >
-                <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">Tự động điền</p>
-                <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
-                  Chấm tất cả tiêu chí của các tuần là
-                  <b>{{ meetingFillSuggest.label }}</b>?
-                </p>
-                <div class="mt-2 flex items-center justify-center gap-3">
-                  <Button
-                    type="button"
-                    icon="pi pi-check-circle"
-                    severity="success"
-                    text
-                    rounded
-                    @click="emit('fill-all')"
+                <div
+                  class="relative rounded-xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-600 dark:bg-slate-800"
+                >
+                  <span
+                    class="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 border-l border-t border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-800"
                   />
-                  <Button
-                    type="button"
-                    icon="pi pi-times-circle"
-                    severity="danger"
-                    text
-                    rounded
-                    @click="emit('dismiss-fill')"
-                  />
+                  <div class="relative space-y-2.5">
+                    <div class="flex items-start gap-2">
+                      <span
+                        class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(var(--app-primary-rgb),0.12)] text-[var(--app-primary)]"
+                      >
+                        <i class="pi pi-bolt text-[10px]" />
+                      </span>
+                      <div class="min-w-0">
+                        <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">
+                          Tự động điền
+                        </p>
+                        <p class="mt-0.5 text-[11px] leading-4 text-slate-500 dark:text-slate-400">
+                          Chấm tất cả tiêu chí là
+                          <span class="font-semibold text-slate-700 dark:text-slate-200">{{
+                            meetingFillSuggest.label
+                          }}</span
+                          >?
+                        </p>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <Button
+                        type="button"
+                        label="Đồng ý"
+                        icon="pi pi-check"
+                        size="small"
+                        class="flex-1"
+                        @click="emit('fill-all')"
+                      />
+                      <Button
+                        type="button"
+                        label="Không"
+                        severity="secondary"
+                        outlined
+                        size="small"
+                        class="flex-1"
+                        @click="emit('dismiss-fill')"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </td>
@@ -143,16 +211,20 @@ function onToggle(row: JobKpiWeekMeetingRow, weekNumber: number, checked: boolea
       </table>
     </div>
 
-    <div>
-      <label class="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">
-        Nhận xét
+    <div
+      class="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 dark:border-slate-700 dark:bg-slate-800/40"
+    >
+      <label
+        class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+      >
+        Nhận xét họp tuần
       </label>
       <Textarea
         :model-value="detail.description"
         :disabled="disabled"
         rows="3"
         auto-resize
-        placeholder="Nhập nhận xét"
+        placeholder="Nhập nhận xét chung cho phần họp tuần..."
         class="w-full text-sm"
         @update:model-value="emit('update-description', String($event ?? ''))"
       />

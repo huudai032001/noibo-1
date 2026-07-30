@@ -149,11 +149,8 @@ function onStatusFilter(filter: number | ''): void {
       <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div class="min-w-0 space-y-1">
           <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--app-primary)]">
-            Hành chính
-          </p>
-          <h1 class="text-xl font-semibold text-slate-900 dark:text-slate-100 sm:text-2xl">
             {{ title }}
-          </h1>
+          </p>
           <p class="max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
             {{ subtitle }}
           </p>

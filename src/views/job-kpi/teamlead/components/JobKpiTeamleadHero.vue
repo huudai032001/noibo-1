@@ -134,11 +134,8 @@ function onStatusFilter(filter: number | null): void {
     <div class="relative space-y-4 p-4 sm:p-5">
       <div class="min-w-0 space-y-1">
         <p class="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--app-primary)]">
-          KPI
-        </p>
-        <h1 class="text-xl font-semibold text-slate-900 dark:text-slate-100 sm:text-2xl">
           Chấm KPI và họp tuần
-        </h1>
+        </p>
         <p class="max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
           Ưu tiên nhân sự cần chấm, theo dõi % KPI và điểm họp tuần theo tháng.
         </p>
