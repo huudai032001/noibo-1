@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import Button from 'primevue/button'
 import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
@@ -10,6 +10,8 @@ import type {
   JobKpiWeekMeetingRow,
 } from '../models/job-kpi-teamlead.model'
 import { formatScoreOrEmpty } from '../utils/job-kpi-teamlead-helpers'
+
+type MeetingViewMode = 'week' | 'all'
 
 const props = withDefaults(
   defineProps<{
@@ -28,10 +30,41 @@ const emit = defineEmits<{
   'dismiss-fill': []
 }>()
 
+const viewMode = ref<MeetingViewMode>('week')
+const activeWeekIndex = ref(0)
+
 const weekCount = computed(() => props.detail.weekCount)
+const criteriaTotal = computed(() => props.detail.weekMeetings.length)
+const isWeekMode = computed(() => viewMode.value === 'week')
 
 function isPass(score: number | null): boolean {
   return score === JOB_KPI_MEETING_SCORE.pass
+}
+
+function scoredCountForWeek(weekIndex: number): number {
+  const weekNumber = weekIndex + 1
+  return props.detail.weekMeetings.filter((row) => {
+    const week = row.weeks.find((item) => item.weekNumber === weekNumber)
+    return week?.score !== null && week?.score !== undefined
+  }).length
+}
+
+function weekPillClass(weekIndex: number): string {
+  const scored = scoredCountForWeek(weekIndex)
+  const isActive = activeWeekIndex.value === weekIndex
+  if (isActive) return 'bg-[var(--app-primary)] text-white shadow-sm'
+  if (scored === criteriaTotal.value && criteriaTotal.value > 0) {
+    return 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-800'
+  }
+  if (scored > 0) {
+    return 'bg-amber-50 text-amber-700 ring-1 ring-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-800'
+  }
+  return 'bg-white text-slate-600 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700'
+}
+
+function getWeekCell(row: JobKpiWeekMeetingRow, weekIndex: number) {
+  const weekNumber = weekIndex + 1
+  return row.weeks.find((item) => item.weekNumber === weekNumber)
 }
 
 function isSuggestFor(row: JobKpiWeekMeetingRow, weekNumber: number): boolean {
@@ -49,6 +82,14 @@ function onToggle(row: JobKpiWeekMeetingRow, weekNumber: number, checked: boolea
     weekNumber,
     checked ? JOB_KPI_MEETING_SCORE.pass : JOB_KPI_MEETING_SCORE.fail,
   )
+}
+
+function goPrevWeek(): void {
+  if (activeWeekIndex.value > 0) activeWeekIndex.value -= 1
+}
+
+function goNextWeek(): void {
+  if (activeWeekIndex.value < weekCount.value - 1) activeWeekIndex.value += 1
 }
 </script>
 
@@ -75,11 +116,170 @@ function onToggle(row: JobKpiWeekMeetingRow, weekNumber: number, checked: boolea
       </div>
     </div>
 
-    <p v-else class="text-xs text-slate-500 dark:text-slate-400">
-      Bật = Đạt · Tắt = Không đạt. Có thể tự động điền khi chấm ô đầu tiên.
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        class="inline-flex w-full rounded-lg border border-slate-200 bg-slate-100/80 p-0.5 sm:w-auto dark:border-slate-700 dark:bg-slate-800/80"
+      >
+        <button
+          type="button"
+          class="flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors sm:flex-none"
+          :class="
+            isWeekMode
+              ? 'bg-white text-[var(--app-primary)] shadow-sm dark:bg-slate-900'
+              : 'text-slate-500 dark:text-slate-400'
+          "
+          @click="viewMode = 'week'"
+        >
+          <i class="pi pi-calendar text-[10px]" />
+          Chấm theo tuần
+        </button>
+        <button
+          type="button"
+          class="flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors sm:flex-none"
+          :class="
+            !isWeekMode
+              ? 'bg-white text-[var(--app-primary)] shadow-sm dark:bg-slate-900'
+              : 'text-slate-500 dark:text-slate-400'
+          "
+          @click="viewMode = 'all'"
+        >
+          <i class="pi pi-table text-[10px]" />
+          Tất cả tuần
+        </button>
+      </div>
+
+      <div v-if="isWeekMode && weekCount > 0" class="flex flex-wrap items-center gap-2">
+        <Button
+          type="button"
+          icon="pi pi-chevron-left"
+          severity="secondary"
+          outlined
+          size="small"
+          :disabled="activeWeekIndex === 0"
+          @click="goPrevWeek"
+        />
+        <div class="flex flex-wrap items-center gap-1">
+          <button
+            v-for="weekIndex in weekCount"
+            :key="weekIndex"
+            type="button"
+            class="inline-flex min-w-[2.75rem] flex-col items-center rounded-lg px-2 py-1 text-[11px] font-semibold transition-colors"
+            :class="weekPillClass(weekIndex - 1)"
+            @click="activeWeekIndex = weekIndex - 1"
+          >
+            <span>T{{ weekIndex }}</span>
+            <span class="text-[9px] font-medium opacity-80">
+              {{ scoredCountForWeek(weekIndex - 1) }}/{{ criteriaTotal }}
+            </span>
+          </button>
+        </div>
+        <Button
+          type="button"
+          icon="pi pi-chevron-right"
+          severity="secondary"
+          outlined
+          size="small"
+          :disabled="activeWeekIndex >= weekCount - 1"
+          @click="goNextWeek"
+        />
+      </div>
+    </div>
+
+    <p class="text-xs text-slate-500 dark:text-slate-400">
+      <template v-if="isWeekMode">
+        Đang chấm
+        <span class="font-semibold text-slate-700 dark:text-slate-200"
+          >Tuần {{ activeWeekIndex + 1 }}</span
+        >
+        — Bật = Đạt, Tắt = Không đạt
+      </template>
+      <template v-else> Xem toàn bộ tuần trong bảng. </template>
     </p>
 
+    <div v-if="isWeekMode" class="space-y-2">
+      <article
+        v-for="row in detail.weekMeetings"
+        :key="row.criteriaId ?? row.id ?? row.criteriaName"
+        class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+      >
+        <p class="min-w-0 flex-1 text-sm leading-5 text-slate-700 dark:text-slate-200">
+          {{ row.criteriaName }}
+        </p>
+
+        <div
+          v-if="getWeekCell(row, activeWeekIndex)"
+          class="relative shrink-0"
+          :class="isSuggestFor(row, activeWeekIndex + 1) ? 'z-30' : ''"
+        >
+          <div
+            class="inline-flex flex-col items-center gap-1.5 rounded-lg px-2 py-1"
+            :class="
+              isSuggestFor(row, activeWeekIndex + 1)
+                ? 'ring-2 ring-[var(--app-primary)] ring-offset-1 dark:ring-offset-slate-900'
+                : ''
+            "
+          >
+            <ToggleSwitch
+              :model-value="isPass(getWeekCell(row, activeWeekIndex)!.score)"
+              :disabled="disabled"
+              @update:model-value="onToggle(row, activeWeekIndex + 1, Boolean($event))"
+            />
+            <span
+              class="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+              :class="
+                isPass(getWeekCell(row, activeWeekIndex)!.score)
+                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
+                  : 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300'
+              "
+            >
+              {{ isPass(getWeekCell(row, activeWeekIndex)!.score) ? 'Đạt' : 'Không đạt' }}
+            </span>
+          </div>
+
+          <div
+            v-if="isSuggestFor(row, activeWeekIndex + 1)"
+            class="absolute right-0 top-[calc(100%+0.25rem)] z-40 w-64"
+            role="dialog"
+            aria-label="Tự động điền"
+          >
+            <div
+              class="rounded-xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-600 dark:bg-slate-800"
+            >
+              <div class="space-y-2.5">
+                <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">Tự động điền</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                  Chấm tất cả tiêu chí là
+                  <span class="font-semibold">{{ meetingFillSuggest.label }}</span
+                  >?
+                </p>
+                <div class="flex gap-1.5">
+                  <Button
+                    type="button"
+                    label="Đồng ý"
+                    icon="pi pi-check"
+                    size="small"
+                    class="flex-1"
+                    @click="emit('fill-all')"
+                  />
+                  <Button
+                    type="button"
+                    label="Không"
+                    severity="secondary"
+                    outlined
+                    size="small"
+                    class="flex-1"
+                    @click="emit('dismiss-fill')"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
     <div
+      v-else
       class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900"
     >
       <table class="w-full min-w-[640px] border-collapse text-left text-sm">
@@ -164,26 +364,15 @@ function onToggle(row: JobKpiWeekMeetingRow, weekNumber: number, checked: boolea
                     class="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 border-l border-t border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-800"
                   />
                   <div class="relative space-y-2.5">
-                    <div class="flex items-start gap-2">
-                      <span
-                        class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(var(--app-primary-rgb),0.12)] text-[var(--app-primary)]"
-                      >
-                        <i class="pi pi-bolt text-[10px]" />
-                      </span>
-                      <div class="min-w-0">
-                        <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">
-                          Tự động điền
-                        </p>
-                        <p class="mt-0.5 text-[11px] leading-4 text-slate-500 dark:text-slate-400">
-                          Chấm tất cả tiêu chí là
-                          <span class="font-semibold text-slate-700 dark:text-slate-200">{{
-                            meetingFillSuggest.label
-                          }}</span
-                          >?
-                        </p>
-                      </div>
-                    </div>
-                    <div class="flex items-center gap-1.5">
+                    <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">
+                      Tự động điền
+                    </p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                      Chấm tất cả tiêu chí là
+                      <span class="font-semibold">{{ meetingFillSuggest.label }}</span
+                      >?
+                    </p>
+                    <div class="flex gap-1.5">
                       <Button
                         type="button"
                         label="Đồng ý"

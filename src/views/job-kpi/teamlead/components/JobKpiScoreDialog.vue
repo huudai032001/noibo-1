@@ -157,7 +157,7 @@ function onHide(): void {
             Chấm KPI · {{ userName }}
           </p>
           <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-            {{ isViewOnly ? 'Chế độ xem — bấm Sửa để chỉnh điểm' : 'Nhập điểm theo tuần rồi xác nhận' }}
+            {{ isViewOnly ? 'Chế độ xem — bấm Sửa để chỉnh điểm' : 'Chấm từng tuần, xem tiến độ rồi xác nhận' }}
           </p>
         </div>
         <span
