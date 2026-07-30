@@ -20,7 +20,7 @@ import logoZalo from '@/assets/logo-zalo.png'
   </div>
   <a
     href="https://zalo.me/edutalkholdings"
-    class="zalo-floating-button fixed bottom-6 right-6 z-[1100] inline-flex size-16 items-center justify-center rounded-full p-2.5 shadow-[0_12px_30px_rgba(15,23,42,0.18)]"
+    class="zalo-floating-button fixed bottom-6 right-6 z-[1100] inline-flex size-16 items-center justify-center p-2.5 "
     target="_blank"
     rel="noopener noreferrer"
     aria-label="Liên hệ Edutalk qua Zalo"

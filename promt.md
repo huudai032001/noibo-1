@@ -1,5 +1,5 @@
-1. Tại router kpis nếu chưa có thì tạo mới
-2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/job-kpi/Staff/JobKpiStaff.vue toàn
+1. Tại router job-kpi/teamlead nếu chưa có thì tạo mới
+2. Lấy logic cũ từ: F:\projects\noibo\src\views/pages/job-kpi/TeamLead/JobKpiTeamlead.vue toàn
    bộ composables/components/models/apis liên quan
 3. Refactor toàn bộ logic sang composables 
 
