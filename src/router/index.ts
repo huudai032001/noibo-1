@@ -20,6 +20,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Đăng ký', bodyClass: 'login' },
   },
   {
+    path: '/404',
+    name: 'not-found',
+    component: () => import('../views/NotFound.vue'),
+    meta: { title: '404 - Không tìm thấy trang' },
+  },
+  {
     path: '/',
     component: () => import('../components/layout/MainLayout.vue'),
     meta: { bodyClass: 'app' },
@@ -128,6 +134,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Đổi mật khẩu' },
       },
+      
       {
         path: 'components/:name',
         component: () => import('../views/PlaceholderPage.vue'),
@@ -137,6 +144,10 @@ const routes: RouteRecordRaw[] = [
         path: 'forms/:name',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Form' },
+      },
+      {
+        path: ':pathMatch(.*)*',
+        redirect: '/404',
       },
     ],
   },
