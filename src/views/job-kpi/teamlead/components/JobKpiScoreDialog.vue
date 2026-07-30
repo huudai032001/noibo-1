@@ -59,28 +59,14 @@ const dialogStyle = computed(() => {
       maxHeight: '100vh',
     }
   }
-
-  return {
-    width: '98vw',
-    maxWidth: '96rem',
-  }
+  return { width: '98vw', maxWidth: '96rem' }
 })
 
 const contentStyle = computed(() => {
   if (isMaximized.value) {
-    return {
-      flexGrow: 1,
-      maxHeight: 'none',
-      overflow: 'auto',
-      paddingTop: '0.5rem',
-    }
+    return { flexGrow: 1, maxHeight: 'none', overflow: 'auto', paddingTop: '0.25rem' }
   }
-
-  return {
-    maxHeight: 'calc(100vh - 8.5rem)',
-    overflow: 'auto',
-    paddingTop: '0.5rem',
-  }
+  return { maxHeight: 'calc(100vh - 8.5rem)', overflow: 'auto', paddingTop: '0.25rem' }
 })
 
 const userInitials = computed(() => {
@@ -91,7 +77,6 @@ const userInitials = computed(() => {
 })
 
 const hasMeetingSection = computed(() => (props.detail?.weekMeetings.length ?? 0) > 0)
-
 const kraTotal = computed(() => props.detail?.details.length ?? 0)
 
 const kraScoredCount = computed(() => {
@@ -102,9 +87,24 @@ const kraScoredCount = computed(() => {
   }).length
 })
 
-const kraProgressLabel = computed(() => {
-  if (kraTotal.value === 0) return 'Chưa có KRA'
-  return `${kraScoredCount.value}/${kraTotal.value} KRA đã có kết quả`
+const kraProgressPercent = computed(() => {
+  if (!kraTotal.value) return 0
+  return Math.min(100, Math.round((kraScoredCount.value / kraTotal.value) * 100))
+})
+
+const meetingCriteriaTotal = computed(() => props.detail?.weekMeetings.length ?? 0)
+const meetingWeekTotal = computed(() => props.detail?.weekCount ?? 0)
+const meetingCellTotal = computed(() => meetingCriteriaTotal.value * meetingWeekTotal.value)
+const meetingScoredCount = computed(() => {
+  if (!props.detail) return 0
+  return props.detail.weekMeetings.reduce((total, row) => {
+    const marked = row.weeks.filter((cell) => cell.score !== null && cell.score !== undefined).length
+    return total + marked
+  }, 0)
+})
+const meetingProgressPercent = computed(() => {
+  if (!meetingCellTotal.value) return 0
+  return Math.min(100, Math.round((meetingScoredCount.value / meetingCellTotal.value) * 100))
 })
 
 watch(
@@ -118,9 +118,7 @@ watch(
 )
 
 watch(hasMeetingSection, (hasMeeting) => {
-  if (!hasMeeting && activeTab.value === 'meeting') {
-    activeTab.value = 'kpi'
-  }
+  if (!hasMeeting && activeTab.value === 'meeting') activeTab.value = 'kpi'
 })
 
 function onHide(): void {
@@ -152,12 +150,16 @@ function onHide(): void {
         >
           {{ userInitials }}
         </span>
-        <div class="min-w-0">
+        <div class="min-w-0 flex-1">
           <p class="truncate text-base font-semibold text-slate-800 dark:text-slate-100">
             Chấm KPI · {{ userName }}
           </p>
           <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-            {{ isViewOnly ? 'Chế độ xem — bấm Sửa để chỉnh điểm' : 'Chấm từng tuần, xem tiến độ rồi xác nhận' }}
+            {{
+              isViewOnly
+                ? 'Chế độ xem — bấm Sửa để chỉnh điểm'
+                : 'Chọn tuần → chấm nhanh → chuyển sang họp tuần'
+            }}
           </p>
         </div>
         <span
@@ -174,115 +176,141 @@ function onHide(): void {
 
     <template v-else-if="detail">
       <div
-        class="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-3"
+        class="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 dark:border-slate-700 dark:bg-slate-800/50"
       >
-        <div
-          class="rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-3 dark:border-slate-700 dark:bg-slate-800/50"
-        >
-          <p class="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            % KPI tổng
-          </p>
-          <p class="mt-1 text-xl font-bold tabular-nums text-[var(--app-primary)]">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-chart-line text-xs text-[var(--app-primary)]" />
+          <span class="text-xs text-slate-500 dark:text-slate-400">KPI</span>
+          <span class="text-sm font-bold tabular-nums text-[var(--app-primary)]">
             {{ formatPercentOrEmpty(detail.totalPercentKra) }}
-          </p>
+          </span>
         </div>
-        <div
-          class="rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-3 dark:border-slate-700 dark:bg-slate-800/50"
-        >
-          <p class="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            Điểm họp tuần
-          </p>
-          <p class="mt-1 text-xl font-bold tabular-nums text-slate-800 dark:text-slate-100">
+        <span class="hidden h-4 w-px bg-slate-200 sm:block dark:bg-slate-600" />
+        <div class="flex items-center gap-2">
+          <i class="pi pi-users text-xs text-slate-500" />
+          <span class="text-xs text-slate-500 dark:text-slate-400">Họp tuần</span>
+          <span class="text-sm font-bold tabular-nums text-slate-800 dark:text-slate-100">
             {{ formatScoreOrEmpty(detail.totalScoreMeeting) }}
-          </p>
+          </span>
         </div>
-        <div
-          class="rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-3 dark:border-slate-700 dark:bg-slate-800/50"
-        >
-          <p class="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            Tiến độ chấm
-          </p>
-          <p class="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
-            {{ kraProgressLabel }}
-          </p>
-          <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+        <span class="hidden h-4 w-px bg-slate-200 sm:block dark:bg-slate-600" />
+        <div class="flex min-w-[10rem] flex-1 items-center gap-2">
+          <span class="shrink-0 text-xs text-slate-500 dark:text-slate-400">
+            {{ kraScoredCount }}/{{ kraTotal }} KRA
+          </span>
+          <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
             <div
               class="h-full rounded-full bg-[var(--app-primary)] transition-all"
-              :style="{
-                width: kraTotal
-                  ? `${Math.min(100, Math.round((kraScoredCount / kraTotal) * 100))}%`
-                  : '0%',
-              }"
+              :style="{ width: `${kraProgressPercent}%` }"
             />
           </div>
+          <span class="shrink-0 text-[11px] font-semibold tabular-nums text-slate-600 dark:text-slate-300">
+            {{ kraProgressPercent }}%
+          </span>
         </div>
       </div>
 
       <div
         v-if="hasMeetingSection"
-        class="mb-4 inline-flex w-full rounded-xl border border-slate-200 bg-slate-100/80 p-1 dark:border-slate-700 dark:bg-slate-800/80 sm:w-auto"
+        class="mb-3 flex w-full rounded-xl border border-slate-200 bg-slate-100/80 p-1 dark:border-slate-700 dark:bg-slate-800/80"
         role="tablist"
       >
         <button
           type="button"
           role="tab"
           :aria-selected="activeTab === 'kpi'"
-          class="flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors sm:flex-none"
+          class="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-colors"
           :class="
             activeTab === 'kpi'
-              ? 'bg-white text-[var(--app-primary)] shadow-sm dark:bg-slate-900 dark:text-[var(--app-primary-dark-soft)]'
-              : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+              ? 'bg-white text-[var(--app-primary)] shadow-sm dark:bg-slate-900'
+              : 'text-slate-500 dark:text-slate-400'
           "
           @click="activeTab = 'kpi'"
         >
-          <i class="pi pi-chart-line text-xs" />
-          I. Kết quả KPI
+          <span
+            class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold"
+            :class="
+              activeTab === 'kpi'
+                ? 'bg-[rgba(var(--app-primary-rgb),0.15)] text-[var(--app-primary)]'
+                : 'bg-slate-200 text-slate-500 dark:bg-slate-700'
+            "
+          >
+            1
+          </span>
+          Kết quả KPI
+          <span
+            class="rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums"
+            :class="
+              activeTab === 'kpi'
+                ? 'bg-[rgba(var(--app-primary-rgb),0.15)] text-[var(--app-primary)]'
+                : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
+            "
+          >
+            {{ kraScoredCount }}/{{ kraTotal }}
+          </span>
         </button>
         <button
           type="button"
           role="tab"
           :aria-selected="activeTab === 'meeting'"
-          class="flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors sm:flex-none"
+          class="flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-colors"
           :class="
             activeTab === 'meeting'
-              ? 'bg-white text-[var(--app-primary)] shadow-sm dark:bg-slate-900 dark:text-[var(--app-primary-dark-soft)]'
-              : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+              ? 'bg-white text-[var(--app-primary)] shadow-sm dark:bg-slate-900'
+              : 'text-slate-500 dark:text-slate-400'
           "
           @click="activeTab = 'meeting'"
         >
-          <i class="pi pi-users text-xs" />
-          II. Họp tuần
+          <span
+            class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold"
+            :class="
+              activeTab === 'meeting'
+                ? 'bg-[rgba(var(--app-primary-rgb),0.15)] text-[var(--app-primary)]'
+                : 'bg-slate-200 text-slate-500 dark:bg-slate-700'
+            "
+          >
+            2
+          </span>
+          Họp tuần
+          <span
+            class="rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums"
+            :class="
+              activeTab === 'meeting'
+                ? 'bg-[rgba(var(--app-primary-rgb),0.15)] text-[var(--app-primary)]'
+                : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
+            "
+          >
+            {{ meetingScoredCount }}/{{ meetingCellTotal }}
+          </span>
         </button>
       </div>
 
-      <div class="pb-1">
-        <JobKpiKraResultTable
-          v-show="activeTab === 'kpi'"
-          :detail="detail"
-          :disabled="isViewOnly"
-          :fill-suggest="fillSuggest"
-          :compact-header="true"
-          @update-kra-field="(...args) => emit('update-kra-field', ...args)"
-          @persist-kra="emit('persist-kra', $event)"
-          @mark-week="(...args) => emit('mark-week', ...args)"
-          @update-description="(...args) => emit('update-kra-description', ...args)"
-          @fill-all-week="emit('fill-all-week')"
-          @dismiss-fill="emit('dismiss-week-fill')"
-        />
+      <JobKpiKraResultTable
+        v-show="activeTab === 'kpi'"
+        :detail="detail"
+        :disabled="isViewOnly"
+        :fill-suggest="fillSuggest"
+        :compact-header="true"
+        @update-kra-field="(...args) => emit('update-kra-field', ...args)"
+        @persist-kra="emit('persist-kra', $event)"
+        @mark-week="(...args) => emit('mark-week', ...args)"
+        @update-description="(...args) => emit('update-kra-description', ...args)"
+        @fill-all-week="emit('fill-all-week')"
+        @dismiss-fill="emit('dismiss-week-fill')"
+      />
 
-        <JobKpiMeetingScoreTable
-          v-if="hasMeetingSection"
-          v-show="activeTab === 'meeting'"
-          :detail="detail"
-          :disabled="isViewOnly"
-          :meeting-fill-suggest="meetingFillSuggest"
-          :compact-header="true"
-          @change-score="(...args) => emit('change-meeting-score', ...args)"
-          @update-description="emit('update-meeting-description', $event)"
-          @fill-all="emit('fill-all-meeting')"
-          @dismiss-fill="emit('dismiss-meeting-fill')"
-        />
-      </div>
+      <JobKpiMeetingScoreTable
+        v-if="hasMeetingSection"
+        v-show="activeTab === 'meeting'"
+        :detail="detail"
+        :disabled="isViewOnly"
+        :meeting-fill-suggest="meetingFillSuggest"
+        :compact-header="true"
+        @change-score="(...args) => emit('change-meeting-score', ...args)"
+        @update-description="emit('update-meeting-description', $event)"
+        @fill-all="emit('fill-all-meeting')"
+        @dismiss-fill="emit('dismiss-meeting-fill')"
+      />
     </template>
 
     <div v-else class="py-12 text-center">
@@ -291,21 +319,28 @@ function onHide(): void {
     </div>
 
     <template #footer>
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-          <span
-            class="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 font-medium tabular-nums dark:bg-slate-800"
-          >
-            KPI {{ formatPercentOrEmpty(detail?.totalPercentKra) }}
-          </span>
-          <span
-            class="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 font-medium tabular-nums dark:bg-slate-800"
-          >
-            Họp {{ formatScoreOrEmpty(detail?.totalScoreMeeting) }}
-          </span>
-        </div>
+      <div class="flex w-full flex-wrap items-center justify-between gap-3">
+        <p class="text-xs text-slate-400 dark:text-slate-500">
+          <template v-if="isViewOnly">Đang ở chế độ xem</template>
+          <template v-else-if="hasMeetingSection && activeTab === 'kpi'">
+            KPI {{ kraScoredCount }}/{{ kraTotal }} ({{ kraProgressPercent }}%) · Xong KPI → chuyển sang tab Họp tuần
+          </template>
+          <template v-else-if="hasMeetingSection && activeTab === 'meeting'">
+            Họp tuần {{ meetingScoredCount }}/{{ meetingCellTotal }} ({{ meetingProgressPercent }}%)
+          </template>
+          <template v-else>Kiểm tra điểm trước khi xác nhận</template>
+        </p>
         <div class="flex flex-wrap justify-end gap-2">
           <Button type="button" label="Huỷ bỏ" severity="secondary" outlined @click="onHide" />
+          <Button
+            v-if="hasMeetingSection && activeTab === 'kpi' && !isViewOnly"
+            type="button"
+            label="Tiếp: Họp tuần"
+            icon="pi pi-arrow-right"
+            icon-pos="right"
+            severity="secondary"
+            @click="activeTab = 'meeting'"
+          />
           <Button
             v-if="isViewOnly"
             type="button"

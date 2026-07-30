@@ -30,12 +30,14 @@ const emit = defineEmits<{
   'dismiss-fill': []
 }>()
 
-const viewMode = ref<MeetingViewMode>('week')
+// Mặc định hiển thị "Tất cả tuần" theo yêu cầu UX.
+const viewMode = ref<MeetingViewMode>('all')
 const activeWeekIndex = ref(0)
 
 const weekCount = computed(() => props.detail.weekCount)
 const criteriaTotal = computed(() => props.detail.weekMeetings.length)
 const isWeekMode = computed(() => viewMode.value === 'week')
+const activeWeekScoredCount = computed(() => scoredCountForWeek(activeWeekIndex.value))
 
 function isPass(score: number | null): boolean {
   return score === JOB_KPI_MEETING_SCORE.pass
@@ -60,6 +62,24 @@ function weekPillClass(weekIndex: number): string {
     return 'bg-amber-50 text-amber-700 ring-1 ring-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-800'
   }
   return 'bg-white text-slate-600 ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700'
+}
+
+const completedWeeksCount = computed(() => {
+  let total = 0
+  for (let i = 0; i < weekCount.value; i += 1) {
+    if (scoredCountForWeek(i) === criteriaTotal.value && criteriaTotal.value > 0) total += 1
+  }
+  return total
+})
+
+function meetingCellWrapClass(score: number | null): string {
+  if (score === JOB_KPI_MEETING_SCORE.pass) {
+    return 'bg-emerald-50/70 ring-1 ring-emerald-100 dark:bg-emerald-950/20 dark:ring-emerald-900/40'
+  }
+  if (score === JOB_KPI_MEETING_SCORE.fail) {
+    return 'bg-red-50/70 ring-1 ring-red-100 dark:bg-red-950/20 dark:ring-red-900/40'
+  }
+  return 'bg-white ring-1 ring-slate-200 dark:bg-slate-800 dark:ring-slate-700'
 }
 
 function getWeekCell(row: JobKpiWeekMeetingRow, weekIndex: number) {
@@ -148,17 +168,33 @@ function goNextWeek(): void {
         </button>
       </div>
 
-      <div v-if="isWeekMode && weekCount > 0" class="flex flex-wrap items-center gap-2">
-        <Button
-          type="button"
-          icon="pi pi-chevron-left"
-          severity="secondary"
-          outlined
-          size="small"
-          :disabled="activeWeekIndex === 0"
-          @click="goPrevWeek"
-        />
-        <div class="flex flex-wrap items-center gap-1">
+    </div>
+
+    <p class="text-xs text-slate-500 dark:text-slate-400">
+      <template v-if="isWeekMode">
+        Đang chấm
+        <span class="font-semibold text-slate-700 dark:text-slate-200"
+          >Tuần {{ activeWeekIndex + 1 }}</span
+        >
+        · {{ activeWeekScoredCount }}/{{ criteriaTotal }} tiêu chí đã chấm — Bật = Đạt, Tắt = Không đạt
+      </template>
+      <template v-else> Xem toàn bộ tuần trong bảng. </template>
+    </p>
+
+    <div v-if="isWeekMode" class="space-y-2">
+      <div
+        class="sticky top-0 z-20 -mx-0.5 rounded-xl border border-slate-200 bg-white/95 px-3 py-2.5 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/95"
+      >
+        <div class="flex flex-wrap items-center gap-1.5">
+          <Button
+            type="button"
+            icon="pi pi-chevron-left"
+            severity="secondary"
+            outlined
+            size="small"
+            :disabled="activeWeekIndex === 0"
+            @click="goPrevWeek"
+          />
           <button
             v-for="weekIndex in weekCount"
             :key="weekIndex"
@@ -172,68 +208,68 @@ function goNextWeek(): void {
               {{ scoredCountForWeek(weekIndex - 1) }}/{{ criteriaTotal }}
             </span>
           </button>
+          <Button
+            type="button"
+            icon="pi pi-chevron-right"
+            severity="secondary"
+            outlined
+            size="small"
+            :disabled="activeWeekIndex >= weekCount - 1"
+            @click="goNextWeek"
+          />
         </div>
-        <Button
-          type="button"
-          icon="pi pi-chevron-right"
-          severity="secondary"
-          outlined
-          size="small"
-          :disabled="activeWeekIndex >= weekCount - 1"
-          @click="goNextWeek"
-        />
+        <p class="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+          Tuần {{ activeWeekIndex + 1 }} · {{ activeWeekScoredCount }}/{{ criteriaTotal }}
+          tiêu chí đã chấm · Bật = Đạt · Tắt = Không đạt
+        </p>
       </div>
-    </div>
 
-    <p class="text-xs text-slate-500 dark:text-slate-400">
-      <template v-if="isWeekMode">
-        Đang chấm
-        <span class="font-semibold text-slate-700 dark:text-slate-200"
-          >Tuần {{ activeWeekIndex + 1 }}</span
-        >
-        — Bật = Đạt, Tắt = Không đạt
-      </template>
-      <template v-else> Xem toàn bộ tuần trong bảng. </template>
-    </p>
-
-    <div v-if="isWeekMode" class="space-y-2">
       <article
-        v-for="row in detail.weekMeetings"
+        v-for="(row, rowIndex) in detail.weekMeetings"
         :key="row.criteriaId ?? row.id ?? row.criteriaName"
         class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-900"
       >
-        <p class="min-w-0 flex-1 text-sm leading-5 text-slate-700 dark:text-slate-200">
-          {{ row.criteriaName }}
-        </p>
+        <div class="flex min-w-0 items-start gap-2.5">
+          <span
+            class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(var(--app-primary-rgb),0.12)] text-[11px] font-bold text-[var(--app-primary)]"
+          >
+            {{ rowIndex + 1 }}
+          </span>
+          <p class="text-sm leading-5 text-slate-700 dark:text-slate-200">{{ row.criteriaName }}</p>
+        </div>
 
         <div
           v-if="getWeekCell(row, activeWeekIndex)"
           class="relative shrink-0"
           :class="isSuggestFor(row, activeWeekIndex + 1) ? 'z-30' : ''"
         >
-          <div
-            class="inline-flex flex-col items-center gap-1.5 rounded-lg px-2 py-1"
-            :class="
-              isSuggestFor(row, activeWeekIndex + 1)
-                ? 'ring-2 ring-[var(--app-primary)] ring-offset-1 dark:ring-offset-slate-900'
-                : ''
-            "
-          >
-            <ToggleSwitch
-              :model-value="isPass(getWeekCell(row, activeWeekIndex)!.score)"
-              :disabled="disabled"
-              @update:model-value="onToggle(row, activeWeekIndex + 1, Boolean($event))"
-            />
-            <span
-              class="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              class="rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors"
               :class="
                 isPass(getWeekCell(row, activeWeekIndex)!.score)
-                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
-                  : 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-emerald-50 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-600'
               "
+              :disabled="disabled"
+              @click="onToggle(row, activeWeekIndex + 1, true)"
             >
-              {{ isPass(getWeekCell(row, activeWeekIndex)!.score) ? 'Đạt' : 'Không đạt' }}
-            </span>
+              Đạt
+            </button>
+            <button
+              type="button"
+              class="rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors"
+              :class="
+                !isPass(getWeekCell(row, activeWeekIndex)!.score)
+                  ? 'bg-red-600 text-white shadow-sm'
+                  : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-red-50 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-600'
+              "
+              :disabled="disabled"
+              @click="onToggle(row, activeWeekIndex + 1, false)"
+            >
+              Không đạt
+            </button>
           </div>
 
           <div
@@ -278,10 +314,41 @@ function goNextWeek(): void {
       </article>
     </div>
 
-    <div
-      v-else
-      class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900"
-    >
+    <div v-else class="space-y-2">
+      <div
+        class="rounded-xl border border-slate-200 bg-white/95 px-3 py-2.5 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/95"
+      >
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">
+              Tiến độ từng tuần
+            </span>
+            <span class="text-[11px] text-slate-400 dark:text-slate-500">
+              {{ completedWeeksCount }}/{{ weekCount }} tuần hoàn thành
+            </span>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
+            <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300">Đạt</span>
+            <span class="rounded-full bg-red-50 px-2 py-0.5 text-red-700 dark:bg-red-950/30 dark:text-red-300">Không đạt</span>
+            <span class="rounded-full bg-slate-100 px-2 py-0.5 text-slate-600 dark:bg-slate-800 dark:text-slate-300">Chưa chấm</span>
+          </div>
+        </div>
+        <div class="mt-2 flex flex-wrap gap-1.5">
+          <span
+            v-for="weekIndex in weekCount"
+            :key="weekIndex"
+            class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold"
+            :class="weekPillClass(weekIndex - 1)"
+          >
+            <span>Tuần {{ weekIndex }}</span>
+            <span class="opacity-80">{{ scoredCountForWeek(weekIndex - 1) }}/{{ criteriaTotal }}</span>
+          </span>
+        </div>
+      </div>
+
+      <div
+        class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900"
+      >
       <table class="w-full min-w-[640px] border-collapse text-left text-sm">
         <thead>
           <tr class="bg-[var(--app-primary)] text-white">
@@ -327,11 +394,13 @@ function goNextWeek(): void {
               :class="isSuggestFor(row, week.weekNumber) ? 'z-30' : ''"
             >
               <div
-                class="inline-flex flex-col items-center gap-1.5 rounded-lg px-1 py-0.5 transition-shadow"
+                class="inline-flex flex-col items-center gap-1.5 rounded-lg px-2 py-1 transition-shadow"
                 :class="
-                  isSuggestFor(row, week.weekNumber)
-                    ? 'ring-2 ring-[var(--app-primary)] ring-offset-1 dark:ring-offset-slate-900'
-                    : ''
+                  `${meetingCellWrapClass(week.score)} ${
+                    isSuggestFor(row, week.weekNumber)
+                      ? 'ring-2 ring-[var(--app-primary)] ring-offset-1 dark:ring-offset-slate-900'
+                      : ''
+                  }`
                 "
               >
                 <ToggleSwitch
@@ -398,6 +467,7 @@ function goNextWeek(): void {
           </tr>
         </tbody>
       </table>
+    </div>
     </div>
 
     <div

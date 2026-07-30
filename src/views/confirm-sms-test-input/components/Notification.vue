@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import ProgressSpinner from 'primevue/progressspinner'
+import Skeleton from 'primevue/skeleton'
 import { useFormatter } from '@/composables/use-formatter'
 import type {
   ConfirmSmsScheduleItem,
@@ -105,12 +105,7 @@ const cancelledAtLabel = computed(() => {
     </ResultMessage>
 
     <div v-else class="notification__loading">
-      <ProgressSpinner
-        style="width: 36px; height: 36px"
-        stroke-width="3"
-        fill="transparent"
-        animation-duration="0.8s"
-      />
+      <Skeleton shape="circle" size="2.25rem" />
       <p>Đang kiểm tra trạng thái...</p>
     </div>
   </div>
