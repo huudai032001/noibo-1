@@ -49,7 +49,7 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Đề xuất' },
       },
       {
-        path: 'propose/decided/teamLead-BOD',
+        path: 'propose/decided/teamlead-bod',
         name: 'list-propose-lead-bod',
         component: () => import('../views/propose/ProposeApproval.vue'),
         meta: { title: 'Duyệt đề xuất' },

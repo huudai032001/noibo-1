@@ -14,6 +14,7 @@ const page = useProposePage()
 const {
   items,
   loading,
+  loadingSearch,
   loadingAction,
   loadingCreate,
   errorMessage,
@@ -74,6 +75,7 @@ const {
     <ProposeTable
       :items="items"
       :loading="loading"
+      :loading-search="loadingSearch"
       :total="total"
       show-create-empty
       @view="handleOpenDetail"

@@ -18,6 +18,7 @@ import type {
 } from '../models/propose.model'
 
 interface ProposeFetchState {
+  items: Ref<ProposeItem[]>
   profileUser: Ref<ProposeProfileUser | null>
   setItems: (items: ProposeItem[]) => void
   setLoading: (value: boolean) => void
@@ -90,7 +91,8 @@ export function useProposeFetch(
   }
 
   async function loadEmployeeList(): Promise<void> {
-    state.setLoading(true)
+    const softReload = state.items.value.length > 0
+    if (!softReload) state.setLoading(true)
     state.setLoadingSearch(true)
     state.clearError()
 
@@ -118,7 +120,8 @@ export function useProposeFetch(
   }
 
   async function loadApprovalList(): Promise<void> {
-    state.setLoading(true)
+    const softReload = state.items.value.length > 0
+    if (!softReload) state.setLoading(true)
     state.setLoadingSearch(true)
     state.clearError()
 

@@ -84,8 +84,8 @@ const stats = computed(() => [
 ])
 
 const showCreateButton = computed(() => {
-  if (props.mode === 'employee') return props.canCreate !== false
-  return Boolean(props.canCreate)
+  if (props.mode === 'approval') return false
+  return props.canCreate !== false
 })
 
 const filtersActive = computed(() =>

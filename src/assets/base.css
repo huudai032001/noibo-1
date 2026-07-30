@@ -5,6 +5,11 @@
   --app-primary-hover: #3d2780;
   --app-primary-light: rgba(71, 47, 146, 0.08);
   --app-primary-lighter: rgba(71, 47, 146, 0.04);
+  --app-primary-dark: #1e1554;
+  --app-primary-dark-rgb: 30, 21, 84;
+  --app-primary-dark-hover: #1a1249;
+  --app-primary-dark-soft: #6b5b9e;
+  --app-primary-dark-soft-rgb: 107, 91, 158;
 }
 
 /* Header shell uses primary color */
@@ -125,6 +130,178 @@ html.dark-mode .month-picker__month.is-selected {
 #app {
   min-height: 100%;
 }
+
+/*
+ * Midone intro animation sets opacity:0 + translateY on :not(.top-menu--active).
+ * In SPA, toggling active (hover/route) re-matches that selector and replays the
+ * intro — looks like a laggy snap. Keep final state only after first paint.
+ */
+.top-nav > ul > li > a.top-menu,
+.top-nav > ul > li > a.top-menu:not(.top-menu--active),
+.top-nav > ul > li > a.top-menu.top-menu--active {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+.top-nav > ul > li > a.top-menu.top-menu--active {
+  z-index: 10;
+}
+
+.top-nav > ul li .top-menu.top-menu--active .top-menu__icon {
+  color: var(--app-primary, #472f92) !important;
+}
+
+.top-nav > ul li:hover .top-menu:not(.top-menu--active) .top-menu__icon:before {
+  background-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+/* Tab đang mở dropdown (không dùng --active để tránh intro Midone) */
+.top-nav > ul > li.is-open > .top-menu:not(.top-menu--active) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Dropdown UI (giữ vị trí Midone) ── */
+.top-nav > ul > li > ul.top-menu__sub,
+.top-nav > ul > li ul.top-menu__sub--nested {
+  display: block;
+  width: 18rem;
+  overflow: visible;
+  padding: 0.5rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(var(--app-primary-rgb, 71, 47, 146), 0.98) !important;
+  box-shadow:
+    0 20px 48px rgba(15, 23, 42, 0.32),
+    0 4px 12px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(12px);
+  z-index: 60;
+}
+
+.top-nav > ul > li ul.top-menu__sub--nested {
+  width: 16.5rem;
+  z-index: 70;
+}
+
+.top-nav > ul > li > ul.top-menu__sub > li,
+.top-nav > ul > li ul.top-menu__sub--nested > li {
+  padding: 0;
+}
+
+.top-nav > ul > li ul.top-menu__sub .top-menu {
+  height: auto;
+  min-height: 2.65rem;
+  margin: 0.1rem 0;
+  padding: 0.4rem 0.55rem;
+  gap: 0;
+  border-radius: 0.6rem;
+  color: rgba(255, 255, 255, 0.88);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.top-nav > ul > li ul.top-menu__sub .top-menu:hover,
+.top-nav > ul > li ul.top-menu__sub .top-menu:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  outline: none;
+}
+
+.top-nav > ul > li ul.top-menu__sub .top-menu:active {
+  transform: scale(0.985);
+}
+
+.top-nav > ul > li ul.top-menu__sub .top-menu .top-menu__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  opacity: 1;
+}
+
+.top-nav > ul > li ul.top-menu__sub .top-menu .top-menu__icon svg,
+.top-nav > ul > li ul.top-menu__sub .top-menu .top-menu__icon i {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.top-nav > ul > li ul.top-menu__sub .top-menu .top-menu__title {
+  margin-left: 0.65rem;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-nav > ul > li ul.top-menu__sub .top-menu .top-menu__title .top-menu__sub-icon {
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+  opacity: 0.65;
+}
+
+.top-nav > ul > li.is-nested-open > .top-menu,
+.top-nav > ul > li ul.top-menu__sub li.is-nested-open > .top-menu {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.top-nav > ul > li ul.top-menu__sub .top-menu.top-menu--current {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: inset 3px 0 0 #fff;
+  color: #fff;
+}
+
+.top-nav > ul > li ul.top-menu__sub .top-menu.top-menu--current .top-menu__icon {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.top-nav > ul > li ul.top-menu__sub .top-menu.top-menu--current .top-menu__icon,
+.top-nav > ul > li ul.top-menu__sub .top-menu.top-menu--current .top-menu__title {
+  color: #fff;
+  font-weight: 600;
+  opacity: 1;
+}
+
+.top-nav > ul > li ul ul,
+.top-nav > ul > li ul.top-menu__sub--nested {
+  background: rgba(var(--app-primary-rgb, 71, 47, 146), 0.99) !important;
+}
+
+/* Open / close — chỉ opacity để không lệch vị trí Midone */
+.top-menu-dropdown-enter-active,
+.top-menu-dropdown-leave-active,
+.top-menu-nested-enter-active,
+.top-menu-nested-leave-active {
+  transition: opacity 0.12s ease;
+}
+
+.top-menu-dropdown-enter-from,
+.top-menu-dropdown-leave-to,
+.top-menu-nested-enter-from,
+.top-menu-nested-leave-to {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-menu-dropdown-enter-active,
+  .top-menu-dropdown-leave-active,
+  .top-menu-nested-enter-active,
+  .top-menu-nested-leave-active,
+  .top-nav > ul > li ul.top-menu__sub .top-menu {
+    transition: none;
+  }
+}
+
 
 /* Background image overlay when user sets an event background */
 /* ── Theme utility classes for dynamic primary color ── */

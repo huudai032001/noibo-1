@@ -1,4 +1,5 @@
 import { computed, onMounted, ref } from 'vue'
+import { useBreadcrumb } from '@/composables/use-breadcrumb'
 import { useProposeDialog } from './use-propose-dialog'
 import { useProposeFetch } from './use-propose-fetch'
 import { useProposeFilter } from './use-propose-filter'
@@ -12,6 +13,12 @@ import { PROPOSE_CATEGORY } from '../constants'
 import type { ProposeApprovalRoleFlags, ProposeItem } from '../models/propose.model'
 
 export function useProposeApprovalPage() {
+  useBreadcrumb([
+    { label: 'Application', to: '/' },
+    { label: 'Hành chính' },
+    { label: 'Duyệt đề xuất', active: true },
+  ])
+
   const state = useProposeState()
   const filter = useProposeFilter()
   const pagination = useProposePagination()
@@ -20,7 +27,7 @@ export function useProposeApprovalPage() {
     isBod: false,
     isTbp: false,
     isLeader: false,
-    canCreate: true,
+    canCreate: false,
   })
 
   const fetch = useProposeFetch(state, pagination, filter)
@@ -165,9 +172,12 @@ export function useProposeApprovalPage() {
 
   onMounted(async () => {
     url.initFromUrl()
-    roleFlags.value = await fetch.loadProfile()
-    await fetch.loadDepartments()
-    await search()
+    const [roles] = await Promise.all([
+      fetch.loadProfile(),
+      fetch.loadDepartments(),
+      search(),
+    ])
+    roleFlags.value = roles
   })
 
   return {

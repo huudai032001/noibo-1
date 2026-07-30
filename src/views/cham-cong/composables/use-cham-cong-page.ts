@@ -1,4 +1,5 @@
 import { onMounted } from 'vue'
+import { useBreadcrumb } from '@/composables/use-breadcrumb'
 import { useChamCongCalendar } from './use-cham-cong-calendar'
 import { useChamCongDialog } from './use-cham-cong-dialog'
 import { useChamCongFetch } from './use-cham-cong-fetch'
@@ -10,6 +11,12 @@ import { useChamCongState } from './use-cham-cong-state'
 import { useChamCongUrl } from './use-cham-cong-url'
 
 export function useChamCongPage() {
+  useBreadcrumb([
+    { label: 'Application', to: '/' },
+    { label: 'Hành chính' },
+    { label: 'Chấm công', active: true },
+  ])
+
   const state = useChamCongState()
   const filter = useChamCongFilter(state)
   const fetch = useChamCongFetch(state)

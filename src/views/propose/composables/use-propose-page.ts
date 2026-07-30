@@ -1,4 +1,5 @@
 import { computed, onMounted } from 'vue'
+import { useBreadcrumb } from '@/composables/use-breadcrumb'
 import { useProposeDialog } from './use-propose-dialog'
 import { useProposeFetch } from './use-propose-fetch'
 import { useProposeFilter } from './use-propose-filter'
@@ -12,6 +13,12 @@ import { PROPOSE_CATEGORY } from '../constants'
 import type { ProposeItem } from '../models/propose.model'
 
 export function useProposePage() {
+  useBreadcrumb([
+    { label: 'Application', to: '/' },
+    { label: 'Hành chính' },
+    { label: 'Đề xuất', active: true },
+  ])
+
   const state = useProposeState()
   const filter = useProposeFilter()
   const pagination = useProposePagination()
@@ -127,8 +134,7 @@ export function useProposePage() {
 
   onMounted(async () => {
     url.initFromUrl()
-    await fetch.loadProfile()
-    await search()
+    await Promise.all([fetch.loadProfile(), search()])
   })
 
   return {

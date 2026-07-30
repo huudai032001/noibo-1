@@ -1,6 +1,6 @@
 import { PERMISSION } from '@/constants/permission'
 import { POSITION, TPNS, TPOL, TRAINER, TVV } from '@/constants/account-position'
-import type { BreadcrumbMap, MenuItem } from '@/models/menu.model'
+import type { MenuItem } from '@/models/menu.model'
 
 export const topMenuItems: MenuItem[] = [
   {
@@ -166,7 +166,7 @@ export const topMenuItems: MenuItem[] = [
       {
         title: 'Duyệt đề xuất',
         icon: 'CheckCircle',
-        to: '/propose/decided/teamLead-BOD',
+        to: '/propose/decided/teamlead-bod',
         name: 'list-propose-lead-bod',
         auth: PERMISSION.DUYET_DE_XUAT,
       },
@@ -424,78 +424,3 @@ export const topMenuItems: MenuItem[] = [
 ]
 
 export const sideMenuItems = topMenuItems
-
-export const breadcrumbs = {
-  '/work-calendar': [{ label: 'Application', to: '/' }, { label: 'Đăng ký lịch làm', active: true }],
-  '/cham-cong': [
-    { label: 'Application', to: '/' },
-    { label: 'Hành chính' },
-    { label: 'Chấm công', active: true },
-  ],
-  '/attendance-calendar': [
-    { label: 'Application', to: '/' },
-    { label: 'Chấm công' },
-    { label: 'Chấm công', active: true },
-  ],
-  '/attendance-view': [
-    { label: 'Application', to: '/' },
-    { label: 'Chấm công' },
-    { label: 'Xem chấm công nhân sự', active: true },
-  ],
-  '/payment-list': [
-    { label: 'Application', to: '/' },
-    { label: 'Danh sách' },
-    { label: 'Danh sách đóng tiền', active: true },
-  ],
-  '/payment-location': [
-    { label: 'Application', to: '/' },
-    { label: 'Danh sách' },
-    { label: 'Đóng tiền tại điểm', active: true },
-  ],
-  '/hierarchy': [
-    { label: 'Application', to: '/' },
-    { label: 'Danh sách' },
-    { label: 'Phân cấp nhân sự', active: true },
-  ],
-  '/customer/list': [
-    { label: 'Application', to: '/' },
-    { label: 'Danh sách' },
-    { label: 'Khách hàng', active: true },
-  ],
-  '/sales-input': [
-    { label: 'Application', to: '/' },
-    { label: 'Danh sách' },
-    { label: 'Tiến độ đạt mục tiêu', active: true },
-  ],
-  '/thong-tin/thong-bao': [
-    { label: 'Application', to: '/' },
-    { label: 'Thông tin' },
-    { label: 'Thông báo', active: true },
-  ],
-  '/thong-tin/chinh-sach-nhan-su': [
-    { label: 'Application', to: '/' },
-    { label: 'Thông tin' },
-    { label: 'Chính sách nhân sự', active: true },
-  ],
-  '/thong-tin/cam-nang-van-hanh': [
-    { label: 'Application', to: '/' },
-    { label: 'Thông tin' },
-    { label: 'Cẩm nang vận hành', active: true },
-  ],
-  '/honors-page': [{ label: 'Application', to: '/' }, { label: 'Vinh danh', active: true }],
-  '/phieu-luong': [
-    { label: 'Application', to: '/' },
-    { label: 'Hành chính' },
-    { label: 'Phiếu lương', active: true },
-  ],
-  '/propose': [
-    { label: 'Application', to: '/' },
-    { label: 'Hành chính' },
-    { label: 'Đề xuất', active: true },
-  ],
-  '/propose/decided/teamLead-BOD': [
-    { label: 'Application', to: '/' },
-    { label: 'Hành chính' },
-    { label: 'Duyệt đề xuất', active: true },
-  ],
-}

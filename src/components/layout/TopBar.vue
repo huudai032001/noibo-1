@@ -19,11 +19,14 @@ import DarkModeToggle from './DarkModeToggle.vue'
 import ThemeSettingsPanel from './ThemeSettingsPanel.vue'
 import logoEdutalk from '@/assets/logo_edutalk.svg'
 import { useAuthStore } from '@/stores/auth'
+import { useBreadcrumbStore } from '@/stores/breadcrumb'
 import { useThemeStore } from '@/stores/theme'
 
 const authStore = useAuthStore()
+const breadcrumbStore = useBreadcrumbStore()
 const themeStore = useThemeStore()
 const { currentUser } = storeToRefs(authStore)
+const { items: breadcrumbItems } = storeToRefs(breadcrumbStore)
 const { bgImageUrl, isDark } = storeToRefs(themeStore)
 
 const avatarLoadFailed = ref(false)
@@ -63,13 +66,6 @@ const headerStyle = computed(() => {
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
   }
-})
-
-defineProps({
-  breadcrumbItems: {
-    type: Array,
-    default: () => [],
-  },
 })
 
 const openDropdown = ref(null)

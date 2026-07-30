@@ -1,9 +1,15 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
+import { useBreadcrumb } from '@/composables/use-breadcrumb'
 
 const route = useRoute()
 const title = computed(() => route.meta?.title || 'Trang')
+
+useBreadcrumb([
+  { label: 'Application', to: '/' },
+  { label: String(route.meta?.title || 'Page'), active: true },
+])
 </script>
 
 <template>

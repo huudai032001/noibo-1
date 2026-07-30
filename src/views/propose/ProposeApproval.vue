@@ -15,6 +15,7 @@ const page = useProposeApprovalPage()
 const {
   items,
   loading,
+  loadingSearch,
   loadingAction,
   loadingCreate,
   errorMessage,
@@ -87,6 +88,7 @@ const {
     <ProposeApprovalTable
       :items="items"
       :loading="loading"
+      :loading-search="loadingSearch"
       :total="total"
       :role-flags="roleFlags"
       @view="handleOpenDetail"

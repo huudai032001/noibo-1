@@ -10,12 +10,16 @@ import ProposeEmptyState from './ProposeEmptyState.vue'
 import ProposeStatusBadge from './ProposeStatusBadge.vue'
 import ProposeTableSkeleton from './ProposeTableSkeleton.vue'
 
-const props = defineProps<{
-  items: ProposeItem[]
-  loading: boolean
-  total: number
-  roleFlags: ProposeApprovalRoleFlags
-}>()
+const props = withDefaults(
+  defineProps<{
+    items: ProposeItem[]
+    loading: boolean
+    loadingSearch?: boolean
+    total: number
+    roleFlags: ProposeApprovalRoleFlags
+  }>(),
+  { loadingSearch: false },
+)
 
 const emit = defineEmits<{
   view: [item: ProposeItem]
@@ -30,6 +34,8 @@ const columnCount = computed(() => {
   if (props.roleFlags.isBod) return 7
   return 8
 })
+
+const isRefreshing = computed(() => props.loadingSearch && !props.loading)
 </script>
 
 <template>
@@ -53,9 +59,9 @@ const columnCount = computed(() => {
         </p>
       </div>
 
-      <ProgressBar v-if="loading" mode="indeterminate" class="!h-[3px]" />
+      <ProgressBar v-if="loading || loadingSearch" mode="indeterminate" class="!h-[3px]" />
 
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto" :class="{ 'pointer-events-none opacity-60': isRefreshing }">
         <table class="w-full min-w-[920px] border-collapse text-sm">
           <thead>
             <tr

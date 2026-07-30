@@ -12,6 +12,12 @@ import {
 } from '../utils/icons'
 import BaseChart from '../components/charts/BaseChart.vue'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useBreadcrumb } from '@/composables/use-breadcrumb'
+
+useBreadcrumb([
+  { label: 'Application', to: '/' },
+  { label: 'Dashboard', active: true },
+])
 
 const filterOpen = ref(false)
 

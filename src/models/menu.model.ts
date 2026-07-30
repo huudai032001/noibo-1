@@ -18,5 +18,3 @@ export interface BreadcrumbItem {
   to?: string
   active?: boolean
 }
-
-export type BreadcrumbMap = Record<string, BreadcrumbItem[]>

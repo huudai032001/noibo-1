@@ -1,4 +1,5 @@
 import { onMounted } from 'vue'
+import { useBreadcrumb } from '@/composables/use-breadcrumb'
 import { usePhieuLuongDialog } from './use-phieu-luong-dialog'
 import { usePhieuLuongFetch } from './use-phieu-luong-fetch'
 import { usePhieuLuongFilter } from './use-phieu-luong-filter'
@@ -7,6 +8,12 @@ import { usePhieuLuongState } from './use-phieu-luong-state'
 import { usePhieuLuongUrl } from './use-phieu-luong-url'
 
 export function usePhieuLuongPage() {
+  useBreadcrumb([
+    { label: 'Application', to: '/' },
+    { label: 'Hành chính' },
+    { label: 'Phiếu lương', active: true },
+  ])
+
   const state = usePhieuLuongState()
   const filter = usePhieuLuongFilter(state)
   const fetch = usePhieuLuongFetch(state)

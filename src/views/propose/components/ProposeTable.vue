@@ -13,11 +13,13 @@ withDefaults(
   defineProps<{
     items: ProposeItem[]
     loading: boolean
+    loadingSearch?: boolean
     total: number
     showCreate?: boolean
     showCreateEmpty?: boolean
   }>(),
   {
+    loadingSearch: false,
     showCreate: true,
     showCreateEmpty: false,
   },
@@ -60,9 +62,12 @@ const { formatDate } = useFormatter()
         </button>
       </div>
 
-      <ProgressBar v-if="loading" mode="indeterminate" class="!h-[3px]" />
+      <ProgressBar v-if="loading || loadingSearch" mode="indeterminate" class="!h-[3px]" />
 
-      <div class="overflow-x-auto">
+      <div
+        class="overflow-x-auto"
+        :class="{ 'pointer-events-none opacity-60': loadingSearch && !loading }"
+      >
         <table class="w-full min-w-[760px] border-collapse text-sm">
           <thead>
             <tr
