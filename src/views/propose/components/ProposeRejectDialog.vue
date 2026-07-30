@@ -25,8 +25,8 @@ const emit = defineEmits<{
     @update:visible="emit('update:visible', $event)"
   >
     <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-slate-700">
-        Lý do từ chối <span class="text-red-500">*</span>
+      <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+        Lý do từ chối <span class="text-red-500 dark:text-red-400">*</span>
       </label>
       <Textarea
         :model-value="reasonForRefusal"

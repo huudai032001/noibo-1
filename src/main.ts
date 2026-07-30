@@ -13,6 +13,7 @@ import './assets/tailwind.css'
 import './assets/base.css'
 import './assets/dark-mode.css'
 import { initTheme } from '@/utils/theme'
+import { PRIMEVUE_VI_LOCALE } from '@/utils/primevue-locale'
 
 const app = createApp(App)
 
@@ -35,6 +36,7 @@ const EduPreset = definePreset(Aura, {
 })
 
 app.use(PrimeVue, {
+  locale: PRIMEVUE_VI_LOCALE,
   theme: {
     preset: EduPreset,
     options: {

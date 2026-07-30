@@ -20,10 +20,10 @@ const emit = defineEmits<{
     >
       <i class="pi pi-inbox text-2xl" />
     </span>
-    <h3 class="text-base font-semibold text-slate-800">
+    <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">
       {{ title || 'Chưa có đề xuất nào' }}
     </h3>
-    <p class="mt-2 max-w-md text-sm leading-6 text-slate-500">
+    <p class="mt-2 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">
       {{
         description ||
           'Bạn chưa gửi đề xuất nào hoặc không có kết quả phù hợp với bộ lọc hiện tại.'

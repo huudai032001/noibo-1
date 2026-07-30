@@ -42,3 +42,4 @@
 13. Khi mà ở trang chi tiết cần có UI UX để quay lại trang trước
 14 Hãy sử dụng tailwind để css và primeVue để làm toàn bộ component tuyệt đối không dùng manual css nếu có thì phải hỏi trước
 15. Nội dung nếu có thì dùng tiếng việt nhé
+16. Thêm darkmode 

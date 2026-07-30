@@ -131,36 +131,41 @@ export function getCategoryMeta(category: ProposeCategory | number | undefined):
       return {
         icon: 'pi pi-calendar-minus',
         shortLabel: 'Nghỉ phép',
-        badgeClass: 'bg-violet-50 text-violet-700 ring-violet-200/80',
-        iconClass: 'text-violet-600',
+        badgeClass:
+          'bg-violet-50 text-violet-700 ring-violet-200/80 dark:bg-violet-950/50 dark:text-violet-300 dark:ring-violet-800/60',
+        iconClass: 'text-violet-600 dark:text-violet-400',
       }
     case PROPOSE_CATEGORY.overtime:
       return {
         icon: 'pi pi-clock',
         shortLabel: 'Tăng ca',
-        badgeClass: 'bg-amber-50 text-amber-800 ring-amber-200/80',
-        iconClass: 'text-amber-600',
+        badgeClass:
+          'bg-amber-50 text-amber-800 ring-amber-200/80 dark:bg-amber-950/50 dark:text-amber-300 dark:ring-amber-800/60',
+        iconClass: 'text-amber-600 dark:text-amber-400',
       }
     case PROPOSE_CATEGORY.shiftChange:
       return {
         icon: 'pi pi-sync',
         shortLabel: 'Đổi ca',
-        badgeClass: 'bg-sky-50 text-sky-700 ring-sky-200/80',
-        iconClass: 'text-sky-600',
+        badgeClass:
+          'bg-sky-50 text-sky-700 ring-sky-200/80 dark:bg-sky-950/50 dark:text-sky-300 dark:ring-sky-800/60',
+        iconClass: 'text-sky-600 dark:text-sky-400',
       }
     case PROPOSE_CATEGORY.offSiteHours:
       return {
         icon: 'pi pi-map-marker',
         shortLabel: 'Bổ sung giờ',
-        badgeClass: 'bg-emerald-50 text-emerald-700 ring-emerald-200/80',
-        iconClass: 'text-emerald-600',
+        badgeClass:
+          'bg-emerald-50 text-emerald-700 ring-emerald-200/80 dark:bg-emerald-950/50 dark:text-emerald-300 dark:ring-emerald-800/60',
+        iconClass: 'text-emerald-600 dark:text-emerald-400',
       }
     default:
       return {
         icon: 'pi pi-file',
         shortLabel: 'Khác',
-        badgeClass: 'bg-slate-50 text-slate-700 ring-slate-200/80',
-        iconClass: 'text-slate-500',
+        badgeClass:
+          'bg-slate-50 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-600/80',
+        iconClass: 'text-slate-500 dark:text-slate-400',
       }
   }
 }
@@ -175,20 +180,23 @@ export function getStatusMeta(status: ProposeStatus | number | undefined): Propo
   if (status === PROPOSE_STATUS.approved) {
     return {
       dotClass: 'bg-emerald-500',
-      badgeClass: 'bg-emerald-50 text-emerald-700 ring-emerald-200/80',
+      badgeClass:
+        'bg-emerald-50 text-emerald-700 ring-emerald-200/80 dark:bg-emerald-950/50 dark:text-emerald-300 dark:ring-emerald-800/60',
       icon: 'pi pi-check-circle',
     }
   }
   if (status === PROPOSE_STATUS.rejected) {
     return {
       dotClass: 'bg-red-500',
-      badgeClass: 'bg-red-50 text-red-700 ring-red-200/80',
+      badgeClass:
+        'bg-red-50 text-red-700 ring-red-200/80 dark:bg-red-950/50 dark:text-red-300 dark:ring-red-800/60',
       icon: 'pi pi-times-circle',
     }
   }
   return {
-    dotClass: 'bg-slate-400',
-    badgeClass: 'bg-slate-100 text-slate-700 ring-slate-200/80',
+    dotClass: 'bg-slate-400 dark:bg-slate-500',
+    badgeClass:
+      'bg-slate-100 text-slate-700 ring-slate-200/80 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-600/80',
     icon: 'pi pi-hourglass',
   }
 }

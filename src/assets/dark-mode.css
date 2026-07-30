@@ -491,3 +491,44 @@ html.dark-mode .payslip-page {
   --pl-section-bg: #0f172a;
   --pl-accent-soft: color-mix(in srgb, var(--pl-accent) 14%, #1e293b);
 }
+
+/* ── Propose: Detail dialog ── */
+html.dark-mode body .propose-detail__legend {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .propose-detail__field dt {
+  color: #94a3b8;
+}
+
+html.dark-mode body .propose-detail__field dd {
+  color: #e2e8f0;
+}
+
+html.dark-mode body .propose-detail__reason {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+html.dark-mode body .propose-detail__reason--danger {
+  background: #450a0a;
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+html.dark-mode body .propose-detail__fieldset,
+html.dark-mode body .propose-detail__fieldset.p-fieldset {
+  border-color: #334155;
+  background: #1e293b;
+}
+
+html.dark-mode body .propose-detail__fieldset--status,
+html.dark-mode body .propose-detail__fieldset--status.p-fieldset {
+  background: #172033;
+}
+
+html.dark-mode body .propose-detail__fieldset .p-fieldset-legend {
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+}

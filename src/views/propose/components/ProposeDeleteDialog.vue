@@ -27,7 +27,7 @@ const { formatDate } = useFormatter()
     :style="{ width: '95vw', maxWidth: '28rem' }"
     @update:visible="emit('update:visible', $event)"
   >
-    <p class="text-sm leading-6 text-slate-700">
+    <p class="text-sm leading-6 text-slate-700 dark:text-slate-300">
       Bạn có chắc chắn muốn xoá đơn xin
       <strong>{{ getCategoryLabel(item?.category) }}</strong>
       ngày <strong>{{ formatDate(item?.startDate, 'date') }}</strong>?

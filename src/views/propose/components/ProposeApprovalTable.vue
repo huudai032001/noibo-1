@@ -36,15 +36,17 @@ const columnCount = computed(() => {
   <div class="col-span-12">
     <div class="box overflow-hidden">
       <div
-        class="flex flex-col items-start justify-between gap-2 border-b border-slate-200/60 px-4 py-4 sm:flex-row sm:items-center sm:px-5"
+        class="flex flex-col items-start justify-between gap-2 border-b border-slate-200/60 px-4 py-4 dark:border-slate-700/80 sm:flex-row sm:items-center sm:px-5"
       >
         <div>
-          <h2 class="text-base font-semibold text-slate-800">Hàng đợi duyệt</h2>
-          <p class="mt-0.5 text-xs text-slate-500">
+          <h2 class="text-base font-semibold text-slate-800 dark:text-slate-100">
+            Hàng đợi duyệt
+          </h2>
+          <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
             Ưu tiên xử lý các đơn đang chờ duyệt trước
           </p>
         </div>
-        <p class="text-sm text-slate-500">
+        <p class="text-sm text-slate-500 dark:text-slate-400">
           Tổng:
           <span class="font-semibold text-[var(--app-primary)]">{{ total }}</span>
           bản ghi
@@ -56,7 +58,9 @@ const columnCount = computed(() => {
       <div class="overflow-x-auto">
         <table class="w-full min-w-[920px] border-collapse text-sm">
           <thead>
-            <tr class="border-b border-slate-200 bg-slate-50/90 text-left text-slate-600">
+            <tr
+              class="border-b border-slate-200 bg-slate-50/90 text-left text-slate-600 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-400"
+            >
               <th class="whitespace-nowrap px-4 py-3 font-medium">STT</th>
               <th class="whitespace-nowrap px-4 py-3 font-medium">Người đề xuất</th>
               <th v-if="!roleFlags.isBod" class="whitespace-nowrap px-4 py-3 font-medium">
@@ -83,14 +87,20 @@ const columnCount = computed(() => {
             <tr
               v-for="(item, index) in items"
               :key="item.id"
-              class="group border-b border-slate-100 transition hover:bg-[rgba(var(--app-primary-rgb),0.03)]"
-              :class="canApprovePropose(item.status) ? 'bg-amber-50/20' : ''"
+              class="group border-b border-slate-100 transition hover:bg-[rgba(var(--app-primary-rgb),0.03)] dark:border-slate-800 dark:hover:bg-[rgba(var(--app-primary-rgb),0.08)]"
+              :class="
+                canApprovePropose(item.status)
+                  ? 'bg-amber-50/20 dark:bg-amber-950/20'
+                  : ''
+              "
             >
-              <td class="px-4 py-3.5 text-slate-500">{{ index + 1 }}</td>
+              <td class="px-4 py-3.5 text-slate-500 dark:text-slate-400">{{ index + 1 }}</td>
               <td class="px-4 py-3.5">
                 <div v-if="item.user" class="min-w-0">
-                  <p class="font-medium text-slate-800">{{ item.user.name }}</p>
-                  <p class="text-xs text-slate-500">
+                  <p class="font-medium text-slate-800 dark:text-slate-100">
+                    {{ item.user.name }}
+                  </p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">
                     Mã NS: {{ formatEmployeeCode(item.user.id) }}
                   </p>
                 </div>
@@ -98,16 +108,21 @@ const columnCount = computed(() => {
               <td v-if="!roleFlags.isBod" class="px-4 py-3.5">
                 <ProposeCategoryBadge :category="item.category" compact />
               </td>
-              <td class="px-4 py-3.5 text-slate-700">
+              <td class="px-4 py-3.5 text-slate-700 dark:text-slate-300">
                 {{ item.parentDepartment || '—' }}
               </td>
               <td class="max-w-xs px-4 py-3.5">
-                <p class="text-slate-800">{{ truncateText(item.reason, 42) }}</p>
+                <p class="text-slate-800 dark:text-slate-100">
+                  {{ truncateText(item.reason, 42) }}
+                </p>
               </td>
               <td class="px-4 py-3.5">
                 <ProposeStatusBadge :status="item.status" />
               </td>
-              <td v-if="!roleFlags.isBod" class="whitespace-nowrap px-4 py-3.5 text-slate-600">
+              <td
+                v-if="!roleFlags.isBod"
+                class="whitespace-nowrap px-4 py-3.5 text-slate-600 dark:text-slate-400"
+              >
                 {{ formatDate(item.createdAt, 'datetime') }}
               </td>
               <td class="px-4 py-3.5">

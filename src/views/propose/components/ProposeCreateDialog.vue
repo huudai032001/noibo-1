@@ -89,7 +89,7 @@ function onPhoneBlur(): void {
   >
     <div class="space-y-5">
       <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <span class="text-sm font-medium text-slate-700">Bạn đang sử dụng mẫu:</span>
+        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Bạn đang sử dụng mẫu:</span>
         <Select
           :model-value="formState.category"
           :options="[...PROPOSE_TYPE_APPLICATION_OPTIONS]"
@@ -103,7 +103,7 @@ function onPhoneBlur(): void {
 
       <section class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-slate-700">Mã nhân sự</label>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Mã nhân sự</label>
           <InputText
             v-if="profileUser"
             :model-value="String(formatEmployeeCode(profileUser.id))"
@@ -112,11 +112,11 @@ function onPhoneBlur(): void {
           />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-slate-700">Họ và tên</label>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Họ và tên</label>
           <InputText :model-value="profileUser?.name ?? ''" disabled fluid />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-slate-700">Vị trí</label>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Vị trí</label>
           <InputText
             :model-value="profileUser?.profile?.accountType?.name ?? ''"
             disabled
@@ -124,7 +124,7 @@ function onPhoneBlur(): void {
           />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-slate-700">{{ departmentLabel }}</label>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ departmentLabel }}</label>
           <InputText
             :model-value="profileUser?.department?.department?.name ?? ''"
             disabled
@@ -136,8 +136,8 @@ function onPhoneBlur(): void {
       <section v-if="formState.category === PROPOSE_CATEGORY.leave" class="space-y-4">
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-slate-700">
-              Tổng số công nghỉ phép <span class="text-red-500">*</span>
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Tổng số công nghỉ phép <span class="text-red-500 dark:text-red-400">*</span>
             </label>
             <InputNumber
               :model-value="formState.generalLeave"
@@ -151,8 +151,8 @@ function onPhoneBlur(): void {
             />
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-slate-700">
-              Ngày bắt đầu nghỉ phép <span class="text-red-500">*</span>
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Ngày bắt đầu nghỉ phép <span class="text-red-500 dark:text-red-400">*</span>
             </label>
             <DatePicker
               :model-value="formState.startDate"
@@ -166,8 +166,8 @@ function onPhoneBlur(): void {
             />
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-slate-700">
-              Buổi bắt đầu nghỉ phép <span class="text-red-500">*</span>
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Buổi bắt đầu nghỉ phép <span class="text-red-500 dark:text-red-400">*</span>
             </label>
             <Select
               :model-value="formState.startShiftOff"
@@ -181,8 +181,8 @@ function onPhoneBlur(): void {
             />
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-slate-700">
-              Ngày kết thúc nghỉ phép <span class="text-red-500">*</span>
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Ngày kết thúc nghỉ phép <span class="text-red-500 dark:text-red-400">*</span>
             </label>
             <DatePicker
               :model-value="formState.endDate"
@@ -197,8 +197,8 @@ function onPhoneBlur(): void {
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-slate-700">
-            Lý do nghỉ phép <span class="text-red-500">*</span>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Lý do nghỉ phép <span class="text-red-500 dark:text-red-400">*</span>
           </label>
           <Textarea
             :model-value="formState.reason"
@@ -211,8 +211,8 @@ function onPhoneBlur(): void {
         </div>
 
         <div class="flex flex-col gap-3">
-          <span class="text-sm font-medium text-slate-700">
-            Loại nghỉ phép <span class="text-red-500">*</span>
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Loại nghỉ phép <span class="text-red-500 dark:text-red-400">*</span>
           </span>
           <div class="flex flex-wrap gap-4">
             <div
@@ -226,21 +226,21 @@ function onPhoneBlur(): void {
                 :model-value="formState.typeLeave"
                 @update:model-value="updateField('typeLeave', $event as number)"
               />
-              <label :for="`leave-type-${option.value}`" class="text-sm text-slate-700">
+              <label :for="`leave-type-${option.value}`" class="text-sm text-slate-700 dark:text-slate-300">
                 {{ option.label }}
               </label>
             </div>
           </div>
         </div>
 
-        <p class="text-sm text-red-500">
+        <p class="text-sm text-red-500 dark:text-red-400">
           Lưu ý: Sau khi nhân sự sử dụng hết ngày phép, thời gian nghỉ sẽ được tính là nghỉ không
           lương.
         </p>
 
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-slate-700">
-            Số điện thoại liên hệ khi cần <span class="text-red-500">*</span>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Số điện thoại liên hệ khi cần <span class="text-red-500 dark:text-red-400">*</span>
           </label>
           <InputText
             v-if="!editPhoneNumber"
@@ -268,9 +268,9 @@ function onPhoneBlur(): void {
       >
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-slate-700">
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
               {{ formState.category === PROPOSE_CATEGORY.overtime ? 'Ngày tăng ca' : 'Ngày cần bổ sung' }}
-              <span class="text-red-500">*</span>
+              <span class="text-red-500 dark:text-red-400">*</span>
             </label>
             <DatePicker
               :model-value="formState.startDate"
@@ -283,8 +283,8 @@ function onPhoneBlur(): void {
             />
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-slate-700">
-              Giờ bắt đầu <span class="text-red-500">*</span>
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Giờ bắt đầu <span class="text-red-500 dark:text-red-400">*</span>
             </label>
             <DatePicker
               :model-value="formState.timeCheckin"
@@ -298,8 +298,8 @@ function onPhoneBlur(): void {
             />
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-slate-700">
-              Giờ kết thúc <span class="text-red-500">*</span>
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Giờ kết thúc <span class="text-red-500 dark:text-red-400">*</span>
             </label>
             <DatePicker
               :model-value="formState.timeCheckout"
@@ -315,13 +315,13 @@ function onPhoneBlur(): void {
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-slate-700">
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
             {{
               formState.category === PROPOSE_CATEGORY.overtime
                 ? 'Lý do tăng ca'
                 : 'Lý do bổ sung'
             }}
-            <span class="text-red-500">*</span>
+            <span class="text-red-500 dark:text-red-400">*</span>
           </label>
           <Textarea
             :model-value="formState.reason"
@@ -341,8 +341,8 @@ function onPhoneBlur(): void {
       <section v-else-if="formState.category === PROPOSE_CATEGORY.shiftChange" class="space-y-4">
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-slate-700">
-              Ngày đổi ca <span class="text-red-500">*</span>
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Ngày đổi ca <span class="text-red-500 dark:text-red-400">*</span>
             </label>
             <DatePicker
               :model-value="formState.startDate"
@@ -355,8 +355,8 @@ function onPhoneBlur(): void {
             />
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-slate-700">
-              Ca hiện tại <span class="text-red-500">*</span>
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Ca hiện tại <span class="text-red-500 dark:text-red-400">*</span>
             </label>
             <Select
               :model-value="formState.currentWorkingHours"
@@ -370,8 +370,8 @@ function onPhoneBlur(): void {
             />
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-slate-700">
-              Ca thay đổi <span class="text-red-500">*</span>
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+              Ca thay đổi <span class="text-red-500 dark:text-red-400">*</span>
             </label>
             <Select
               :model-value="formState.currentWorkingChange"
@@ -388,8 +388,8 @@ function onPhoneBlur(): void {
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-slate-700">
-            Lý do đổi ca <span class="text-red-500">*</span>
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Lý do đổi ca <span class="text-red-500 dark:text-red-400">*</span>
           </label>
           <Textarea
             :model-value="formState.reason"

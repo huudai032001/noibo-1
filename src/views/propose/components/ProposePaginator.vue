@@ -19,11 +19,11 @@ function onPageChange(event: { page: number }): void {
 <template>
   <div v-if="total > 0" class="col-span-12">
     <div
-      class="flex flex-col items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white px-3 py-3 shadow-sm sm:flex-row sm:px-4"
+      class="flex flex-col items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white px-3 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800 sm:flex-row sm:px-4"
     >
-      <p class="text-sm text-slate-500">
+      <p class="text-sm text-slate-500 dark:text-slate-400">
         Hiển thị trang
-        <span class="font-semibold text-slate-800">{{ currentPage }}</span>
+        <span class="font-semibold text-slate-800 dark:text-slate-100">{{ currentPage }}</span>
         · Tổng
         <span class="font-semibold text-[var(--app-primary)]">{{ total }}</span>
         bản ghi

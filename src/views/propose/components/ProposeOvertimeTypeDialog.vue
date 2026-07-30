@@ -26,7 +26,7 @@ const emit = defineEmits<{
     :style="{ width: '95vw', maxWidth: '28rem' }"
     @update:visible="emit('update:visible', $event)"
   >
-    <p class="mb-4 text-sm text-slate-600">
+    <p class="mb-4 text-sm text-slate-600 dark:text-slate-400">
       Vui lòng chọn loại tăng ca trước khi {{ mode === 'approve' ? 'duyệt' : 'gửi' }} yêu cầu.
     </p>
 
@@ -42,7 +42,10 @@ const emit = defineEmits<{
           :model-value="typeArise"
           @update:model-value="emit('update:typeArise', $event as number)"
         />
-        <label :for="`overtime-type-${option.value}`" class="text-sm text-slate-700">
+        <label
+          :for="`overtime-type-${option.value}`"
+          class="text-sm text-slate-700 dark:text-slate-300"
+        >
           {{ option.label }}
         </label>
       </div>

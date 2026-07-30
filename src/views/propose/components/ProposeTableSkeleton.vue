@@ -9,7 +9,11 @@ defineProps<{
 
 <template>
   <tbody>
-    <tr v-for="row in rows ?? 5" :key="row" class="border-b border-slate-100">
+    <tr
+      v-for="row in rows ?? 5"
+      :key="row"
+      class="border-b border-slate-100 dark:border-slate-800"
+    >
       <td v-for="col in columns" :key="col" class="px-3 py-3">
         <Skeleton height="1rem" :width="col === 1 ? '70%' : '85%'" />
       </td>
