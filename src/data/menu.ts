@@ -414,13 +414,6 @@ export const topMenuItems: MenuItem[] = [
       },
     ],
   },
-  {
-    title: 'Vinh danh',
-    icon: 'Trophy',
-    to: '/honors-page',
-    name: 'honor',
-    auth: '',
-  },
 ]
 
 export const sideMenuItems = topMenuItems
