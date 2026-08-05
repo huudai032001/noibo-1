@@ -12,6 +12,7 @@ import { useAuthStore } from '@/stores/auth'
 import './assets/tailwind.css'
 import './assets/base.css'
 import './assets/dark-mode.css'
+import './assets/css/app.css'
 import { initTheme } from '@/utils/theme'
 import { PRIMEVUE_VI_LOCALE } from '@/utils/primevue-locale'
 

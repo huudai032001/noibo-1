@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import logoEdutalk from '@/assets/logo_edutalk.svg'
+import illustration from '@/assets/images/illustration.svg'
 import DarkModeToggle from './DarkModeToggle.vue'
 
 defineProps({
@@ -27,7 +28,7 @@ defineProps({
           <img
             alt="Edutalk"
             class="-intro-x w-1/2 -mt-16"
-            src="/dist/images/illustration.svg"
+            :src="illustration"
           />
           <div class="-intro-x text-white font-medium text-4xl leading-tight mt-10">
             <slot name="info-title">
