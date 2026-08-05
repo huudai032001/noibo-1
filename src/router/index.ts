@@ -85,6 +85,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Kết quả OKRs' },
       },
       {
+        path: 'progress-level',
+        name: 'ProgressLevel',
+        component: () => import('../views/progress-level/ProgressLevel.vue'),
+        meta: { title: 'Tiến trình Level' },
+      },
+      {
         path: 'inbox',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Hộp thư' },
