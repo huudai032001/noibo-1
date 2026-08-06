@@ -91,6 +91,18 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Tiến trình Level' },
       },
       {
+        path: 'level/level-employee',
+        name: 'level-employee-list',
+        component: () => import('../views/level-employee-list/LevelEmployeeList.vue'),
+        meta: { title: 'Bảng tiêu chuẩn chỉ số' },
+      },
+      {
+        path: 'level/level-employee/:id',
+        name: 'level-employee-detail',
+        component: () => import('../views/level-employee-list/LevelEmployeeDetail.vue'),
+        meta: { title: 'Chi tiết nhân viên' },
+      },
+      {
         path: 'inbox',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Hộp thư' },
