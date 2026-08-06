@@ -103,6 +103,30 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Chi tiết nhân viên' },
       },
       {
+        path: 'thong-tin/thong-bao',
+        name: 'thong-bao',
+        component: () => import('../views/thong-tin/thong-bao/ThongBao.vue'),
+        meta: { title: 'Thông báo' },
+      },
+      {
+        path: 'thong-tin/thong-bao/:slug',
+        name: 'thong-bao-detail',
+        component: () => import('../views/thong-tin/thong-bao/ThongBaoDetail.vue'),
+        meta: { title: 'Chi tiết thông báo' },
+      },
+      {
+        path: 'thong-tin/chinh-sach-nhan-su',
+        name: 'chinh-sach-nhan-su',
+        component: () => import('../views/thong-tin/chinh-sach/ChinhSach.vue'),
+        meta: { title: 'Chính sách nhân sự' },
+      },
+      {
+        path: 'thong-tin/cam-nang-van-hanh',
+        name: 'cam-nang-van-hanh',
+        component: () => import('../views/thong-tin/cam-nang/CamNang.vue'),
+        meta: { title: 'Cẩm nang vận hành' },
+      },
+      {
         path: 'inbox',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Hộp thư' },
