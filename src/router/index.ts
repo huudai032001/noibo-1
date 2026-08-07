@@ -127,6 +127,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Cẩm nang vận hành' },
       },
       {
+        path: 'quantum-leap-intro',
+        name: 'quantum-leap-intro',
+        component: () => import('../views/quantum-leap-intro/QuantumLeapIntro.vue'),
+        meta: { title: 'Giới thiệu Quantum Leap' },
+      },
+      {
         path: 'inbox',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Hộp thư' },

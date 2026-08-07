@@ -402,7 +402,7 @@ export const topMenuItems: MenuItem[] = [
         title: 'Giới thiệu Quantum Leap',
         icon: 'Rocket',
         to: '/quantum-leap-intro',
-        name: 'information-notification',
+        name: 'quantum-leap-intro',
         auth: PERMISSION.CANDIDATE,
       },
       {
