@@ -136,7 +136,13 @@ const routes: RouteRecordRaw[] = [
         path: 'advise/center',
         name: 'advise-center',
         component: () => import('../views/advise/center/AdviseCenter.vue'),
-        meta: { title: 'Giới thiệu Quantum Leap' },
+        meta: { title: 'Thông tin sản phẩm' },
+      },
+      {
+        path: 'list-course',
+        name: 'list-course',
+        component: () => import('../views/advise/list-course/ListCourse.vue'),
+        meta: { title: 'Danh sách khóa học' },
       },
       {
         path: 'inbox',

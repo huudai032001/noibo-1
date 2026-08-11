@@ -384,13 +384,6 @@ export const topMenuItems: MenuItem[] = [
         name: 'information-cam-nang',
         auth: PERMISSION.CAM_NANG_VAN_HANH,
       },
-      {
-        title: 'Thông tin sản phẩm',
-        icon: 'Package',
-        to: '/advise/center',
-        name: 'advise-center',
-        auth: 'all',
-      },
     ],
   },
   {
@@ -406,10 +399,10 @@ export const topMenuItems: MenuItem[] = [
         auth: PERMISSION.CANDIDATE,
       },
       {
-        title: 'Danh sách khóa học',
-        icon: 'BookOpen',
+        title: 'Danh sách khoá học',
+        icon: 'Book',
         to: '/list-course',
-        name: 'information-notification',
+        name: 'list-course',
         auth: PERMISSION.CANDIDATE,
       },
     ],
