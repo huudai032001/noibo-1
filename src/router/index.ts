@@ -145,6 +145,18 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Danh sách khóa học' },
       },
       {
+        path: 'report/human-resource',
+        name: 'human-resource-report',
+        component: () => import('../views/report/human-resource/HumanResourceReport.vue'),
+        meta: { title: 'Báo cáo nhân sự' },
+      },
+      {
+        path: 'report/error-target-progress',
+        name: 'error-target-progress-report',
+        component: () => import('../views/report/error-target-progress/ErrorTargetProgressReport.vue'),
+        meta: { title: 'Báo lỗi tiến độ mục tiêu' },
+      },
+      {
         path: 'inbox',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Hộp thư' },
