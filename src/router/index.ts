@@ -133,6 +133,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Giới thiệu Quantum Leap' },
       },
       {
+        path: 'advise/center',
+        name: 'advise-center',
+        component: () => import('../views/advise/center/AdviseCenter.vue'),
+        meta: { title: 'Giới thiệu Quantum Leap' },
+      },
+      {
         path: 'inbox',
         component: () => import('../views/PlaceholderPage.vue'),
         meta: { title: 'Hộp thư' },
