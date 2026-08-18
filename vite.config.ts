@@ -9,6 +9,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  define: {
+    __BUNDLED_DEV__: true,
+  },
   server: {
     port: 8080,
     allowedHosts: true,

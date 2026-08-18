@@ -16,7 +16,7 @@ export function useHumanResourcePage() {
   const filterState = useHumanResourceFilters()
   const dataState = useHumanResourceData(filterState.form as Ref<HumanResourceFilters>)
   const uiState = useHumanResourceUi()
-  const { chartConfig } = useHumanResourceChart(dataState.chartData, filterState.form.year)
+  const { chartConfig, chartDatatest } = useHumanResourceChart(dataState.chartData, filterState.form.year)
 
   // Get keyAccount from accountType.id (6 for regional account)
   const keyAccount = computed(() => currentUser.value?.accountType?.id ?? null)
@@ -86,6 +86,7 @@ export function useHumanResourcePage() {
     reportData: dataState.reportData,
     chartData: dataState.chartData,
     chartConfig,
+    chartDatatest,
     isValidBranch: filterState.isValidBranch,
     isFullTree: uiState.isFullTree,
     isFullDetail: uiState.isFullDetail,

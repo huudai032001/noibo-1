@@ -110,6 +110,7 @@ export function useHumanResourceData(filters: Ref<HumanResourceFilters>) {
   }
 
   const getStaffCount = (position: string): number | Record<string, number> => {
+    console.log(staffCounts.value, position)
     return staffCounts.value[position] ?? 0
   }
 
