@@ -3,6 +3,8 @@ import { computed, onMounted, ref } from 'vue'
 import { useHumanResourcePage } from './composables/use-human-resource-page'
 import ZingChartVue from 'zingchart-vue'
 import 'zingchart'
+import Dropdown from 'primevue/dropdown';
+import Calendar from 'primevue/calendar';
 
 const page = useHumanResourcePage()
 
@@ -151,27 +153,16 @@ const resetFilters = () => {
                 </option>
               </select>
 
-              <select
-                v-model.number="filters.branchId"
-                @change="page.handleBranchChange()"
-                class="col-span-12 md:col-span-4 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm"
-              >
-                <option :value="null">Chọn văn phòng</option>
-                <option v-for="item in branches" :key="item.id" :value="item.id">
-                  {{ item.nameAlias || item.name }}
-                </option>
-              </select>
-
-              <select
-                v-model.number="filters.salaryMechanismId"
+              <Dropdown
+                v-model="filters.salaryMechanismId"
+                :options="mechanisms"
+                optionLabel="name"
                 @change="page.handleMechanismChange()"
-                class="col-span-12 md:col-span-4 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm"
-              >
-                <option :value="null">Chọn cơ chế lương</option>
-                <option v-for="item in mechanisms" :key="item.id" :value="item.id">
-                  {{ item.name }}
-                </option>
-              </select>
+                placeholder="Chọn cơ chế lương"
+                checkmark
+                :highlightOnSelect="false"
+                class="col-span-4 md:w-14rem" />
+
             </div>
           </div>
 
@@ -302,22 +293,20 @@ const resetFilters = () => {
         <div class="p-5">
           <!-- Filters and Reset Button -->
           <div class="grid grid-cols-12 gap-4 mb-4">
-            <input
+            <Calendar
               v-model="filters.year"
-              type="number"
-              :min="2000"
-              :max="currentYear"
+              view="year"
+              dateFormat="yy"
               @change="page.handleYearChange()"
               placeholder="Chọn năm"
-              class="col-span-12 md:col-span-6 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm"
-            />
-            <button
-              @click="resetFilters"
-              class="col-span-12 md:col-span-6 px-4 py-2 rounded-md bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium text-sm transition flex items-center justify-center gap-2"
-            >
-              <i class="fal fa-times-circle"></i>
-              Xóa lọc
-            </button>
+              class="col-span-4" />
+<!--            <button-->
+<!--              @click="resetFilters"-->
+<!--              class="col-span-12 md:col-span-6 px-4 py-2 rounded-md bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium text-sm transition flex items-center justify-center gap-2"-->
+<!--            >-->
+<!--              <i class="fal fa-times-circle"></i>-->
+<!--              Xóa lọc-->
+<!--            </button>-->
           </div>
 
           <!-- Stats Cards -->
